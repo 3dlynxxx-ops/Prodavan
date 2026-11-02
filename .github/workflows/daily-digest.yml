@@ -1,0 +1,58 @@
+name: Daily AI digest
+
+on:
+  schedule:
+    # Щодня о 06:37 UTC ≈ 08:37 за Києвом взимку / 09:37 влітку
+    - cron: "37 6 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Режим запуску"
+        type: choice
+        default: dry-run
+        options:
+          - dry-run        # надрукувати дайджест у лог, нічого не відправляти
+          - send           # відправити в Telegram (як за розкладом)
+          - check-sources  # перевірити, які RSS-стрічки працюють
+
+permissions:
+  contents: write   # щоб зберегти data/seen.json (пам'ять про вже надіслані статті)
+
+concurrency:
+  group: daily-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Run
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MODE: ${{ inputs.mode || 'send' }}
+        run: |
+          case "$MODE" in
+            send)          python -m digest ;;
+            dry-run)       python -m digest --dry-run ;;
+            check-sources) python -m digest --check-sources ;;
+          esac
+
+      - name: Save seen articles
+        if: ${{ (inputs.mode || 'send') == 'send' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/seen.json
+          git diff --cached --quiet || (git commit -m "chore: update seen articles" && git push)

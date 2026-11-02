@@ -1,0 +1,182 @@
+# ─────────────────────────────────────────────────────────────
+#  AI Creative Digest: налаштування
+#  Цей файл можна редагувати прямо в GitHub (олівець ✏️ угорі файлу).
+# ─────────────────────────────────────────────────────────────
+
+settings:
+  max_age_hours: 48        # беремо статті не старші за N годин
+  top_n: 8                 # скільки статей максимум у щоденному дайджесті
+  min_score: 6             # мінімальна оцінка релевантності (0–10), щоб потрапити в дайджест
+  max_candidates: 40       # скільки кандидатів максимум відправляти на оцінку ШІ за один запуск
+  send_empty: true         # надсилати коротке повідомлення, якщо сьогодні нічого вартого немає
+  seen_retention_days: 30  # скільки днів пам'ятати вже оброблені статті (щоб не повторювались)
+  timezone: Europe/Kyiv
+
+llm:
+  model: claude-haiku-5-5
+  # Хто читає дайджест: від цього залежить, як ШІ оцінює статті й формулює ідеї постів
+  audience: >-
+    Маркетинг-відділ студії архітектурної візуалізації (архвіз). Вони ведуть
+    Instagram-блог про те, як ШІ змінює креативні індустрії. Найважливіше:
+    ШІ в архвізі (рендер, візуалізація інтер'єрів та екстер'єрів, концепт-дизайн).
+    Також цікаві: відеопродакшн, анімація, 3D/CG, вебдизайн.
+
+# Категорії: назва для каналу + емодзі. Порядок = порядок у дайджесті.
+categories:
+  archviz:   {title: "Архвіз",          emoji: "🏛", priority: 1.5}
+  video:     {title: "Відео та VFX",    emoji: "🎬", priority: 1.0}
+  animation: {title: "Анімація та 3D",  emoji: "🎞", priority: 1.0}
+  webdesign: {title: "Вебдизайн",       emoji: "🖥", priority: 1.0}
+  other:     {title: "Інше",            emoji: "✨", priority: 0.8}
+
+# Ключові слова для попереднього фільтра (до ШІ).
+# Короткі абревіатури ВЕЛИКИМИ літерами (AI, VFX, UI) шукаються з урахуванням регістру.
+keywords:
+  ai:
+    - AI
+    - GenAI
+    - artificial intelligence
+    - generative
+    - machine learning
+    - neural
+    - diffusion
+    - Stable Diffusion
+    - Midjourney
+    - ComfyUI
+    - Firefly
+    - DALL-E
+    - Runway
+    - Sora
+    - Veo
+    - Kling
+    - Luma
+    - Pika
+    - ChatGPT
+    - LLM
+    - Gaussian splatting
+    - NeRF
+    - text-to-image
+    - text-to-video
+    - image-to-video
+    - text-to-3D
+  creative:
+    archviz:
+      - archviz
+      - arch viz
+      - architectural visualization
+      - architectural visualisation
+      - architectural rendering
+      - architecture
+      - architectural
+      - interior design
+      - real estate
+      - V-Ray
+      - Corona Renderer
+      - Enscape
+      - D5 Render
+      - Lumion
+      - Twinmotion
+      - Chaos
+      - SketchUp
+      - Revit
+      - Rhino
+      - 3ds Max
+    video:
+      - video
+      - film
+      - filmmaking
+      - filmmaker
+      - VFX
+      - visual effects
+      - post-production
+      - cinematography
+      - commercial
+      - DaVinci Resolve
+      - Premiere
+    animation:
+      - animation
+      - animator
+      - animated
+      - motion graphics
+      - motion design
+      - Blender
+      - Houdini
+      - Cinema 4D
+      - Maya
+      - Unreal Engine
+      - mocap
+      - 3D
+    webdesign:
+      - web design
+      - website
+      - UI
+      - UX
+      - Figma
+      - Framer
+      - Webflow
+      - landing page
+      - frontend
+
+# Пошук у Google News (RSS). Ловить статті з сайтів, яких немає в списку джерел.
+google_news:
+  enabled: true
+  hl: en-US
+  gl: US
+  ceid: "US:en"
+  queries:
+    - {q: '"AI" architectural visualization', category: archviz}
+    - {q: '"AI" architecture rendering', category: archviz}
+    - {q: 'generative AI interior design', category: archviz}
+    - {q: 'AI video generation filmmakers', category: video}
+    - {q: 'generative AI animation studio', category: animation}
+    - {q: 'AI web design tools', category: webdesign}
+
+# ─────────────────────────────────────────────────────────────
+#  Джерела (RSS/Atom)
+#  require: що стаття МУСИТЬ згадувати, щоб пройти фільтр:
+#    [ai]            : профільний сайт (архвіз/відео…), але треба згадка ШІ
+#    [creative]      : ШІ-сайт, але треба згадка креативної сфери
+#    [ai, creative]  : загальний сайт, треба і те, і те
+#    []              : брати все (сайт і так про ШІ в креативі)
+#  enabled: false    : тимчасово вимкнути джерело
+#  ⚠ Адреси стрічок ще не перевірені: запустіть режим check-sources (див. README).
+# ─────────────────────────────────────────────────────────────
+sources:
+  # ── Архвіз ──
+  - {name: CGArchitect,          url: "https://www.cgarchitect.com/rss",                 category: archviz,  require: [ai]}
+  - {name: Ronen Bekerman,       url: "https://www.ronenbekerman.com/feed/",             category: archviz,  require: [ai]}
+  - {name: Chaos Blog,           url: "https://blog.chaos.com/rss.xml",                  category: archviz,  require: [ai]}
+  - {name: D5 Render Blog,       url: "https://www.d5render.com/blog/rss.xml",           category: archviz,  require: [ai]}
+  - {name: Enscape Blog,         url: "https://blog.enscape3d.com/rss.xml",              category: archviz,  require: [ai]}
+  - {name: ArchDaily,            url: "https://feeds.feedburner.com/Archdaily",          category: archviz,  require: [ai]}
+  - {name: Dezeen Technology,    url: "https://www.dezeen.com/technology/feed/",         category: archviz,  require: [ai]}
+  - {name: Parametric Architecture, url: "https://parametric-architecture.com/feed/",    category: archviz,  require: [ai]}
+  - {name: designboom Technology, url: "https://www.designboom.com/technology/feed/",    category: archviz,  require: [ai]}
+
+  # ── Відео та VFX ──
+  - {name: fxguide,              url: "https://www.fxguide.com/feed/",                   category: video,    require: [ai]}
+  - {name: befores & afters,     url: "https://beforesandafters.com/feed/",              category: video,    require: [ai]}
+  - {name: No Film School,       url: "https://nofilmschool.com/rss.xml",                category: video,    require: [ai]}
+  - {name: CineD,                url: "https://www.cined.com/feed/",                     category: video,    require: [ai]}
+
+  # ── Анімація та 3D ──
+  - {name: Cartoon Brew,         url: "https://www.cartoonbrew.com/feed",                category: animation, require: [ai]}
+  - {name: Animation World Network, url: "https://www.awn.com/rss.xml",                  category: animation, require: [ai]}
+  - {name: CG Channel,           url: "https://www.cgchannel.com/feed/",                 category: animation, require: [ai]}
+  - {name: 80 Level,             url: "https://80.lv/feed/",                             category: animation, require: [ai]}
+  - {name: BlenderNation,        url: "https://www.blendernation.com/feed/",             category: animation, require: [ai]}
+
+  # ── Вебдизайн ──
+  - {name: Smashing Magazine,    url: "https://www.smashingmagazine.com/feed/",          category: webdesign, require: [ai]}
+  - {name: UX Collective,        url: "https://uxdesign.cc/feed",                        category: webdesign, require: [ai]}
+  - {name: Webflow Blog,         url: "https://webflow.com/blog/rss.xml",                category: webdesign, require: [ai]}
+
+  # ── Загальні дизайн/техно-медіа ──
+  - {name: Creative Bloq,        url: "https://www.creativebloq.com/feeds.xml",          category: other,    require: [ai]}
+  - {name: It's Nice That,       url: "https://www.itsnicethat.com/rss",                 category: other,    require: [ai]}
+  - {name: The Verge AI,         url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", category: other, require: [creative]}
+  - {name: TechCrunch AI,        url: "https://techcrunch.com/category/artificial-intelligence/feed/",     category: other, require: [creative]}
+
+  # ── Reddit (може блокувати запити з GitHub Actions; тоді вимкніть) ──
+  - {name: r/archviz,            url: "https://www.reddit.com/r/archviz/.rss",           category: archviz,  require: [ai]}
+  - {name: r/vfx,                url: "https://www.reddit.com/r/vfx/.rss",               category: video,    require: [ai]}
