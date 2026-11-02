@@ -153,6 +153,33 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
 .q li b{color:var(--warn)}
 .foot{font-size:12px;color:var(--muted)}
 
+/* лінійки, пошук контактів */
+.tier{font-size:12px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--surface-2);color:var(--ink)}
+.tier.T1{background:var(--ink);color:var(--bg)}
+.tier.T3{border:1px solid var(--accent);background:none;color:var(--accent)}
+.niche{font-size:12px;color:var(--muted)}
+.act{font-size:12px;color:var(--muted)}
+.act b{color:var(--ink-soft);font-weight:600}
+.find{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.find a{font-size:12px;font-weight:600;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--ink-soft);background:var(--bg)}
+.find a:hover{border-color:var(--accent);color:var(--accent)}
+.work textarea{grid-column:1/-1;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px;min-height:56px;resize:vertical;width:100%;min-width:0}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;align-items:stretch}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px;align-content:start}
+.tcard.vip{background:var(--band);color:var(--band-fg);border-color:var(--band)}
+.tcard.vip .kv b,.tcard.vip .tnote{color:var(--band-soft)}
+.tcode{font-family:var(--f-display);font-size:64px;font-weight:800;line-height:.8}
+.tcard h3{font-family:var(--f-display);font-size:30px;font-weight:700;line-height:.95;text-transform:uppercase}
+.tprice{font-family:var(--f-display);font-size:40px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.tprice small{font-family:var(--f-text);font-size:13px;font-weight:500;opacity:.75;margin-left:4px}
+.tnote{font-size:13px;color:var(--muted)}
+.cap{display:grid;gap:6px}
+.cap-bar{height:10px;border-radius:5px;background:var(--surface-2);overflow:hidden}
+.tcard.vip .cap-bar{background:rgba(241,241,218,.15)}
+.cap-bar i{display:block;height:100%;background:var(--accent-mid)}
+.combo{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:12px}
+.combo-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
+.combo-row:last-child{border-bottom:0;font-weight:700}
 @media (max-width:640px){
   .band .wrap{grid-template-columns:minmax(0,1fr)}
   .goal{max-width:none}
@@ -167,7 +194,7 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
   <div class="wrap">
     <div>
       <div class="brand">3D Lynx <span>ліди</span></div>
-      <div class="sub">Спринт 1 · листопад 2026 · корпоративні, агенції, опт, нагороди</div>
+      <div class="sub">Спринт 1 · листопад 2026 · фокус: новорічний брендований мерч для бізнесу</div>
     </div>
     <div class="goal" aria-label="Ціль по виручці">
       <div class="goal-row"><span>Зараз <b>100–150 тис.</b></span><span>Ціль <b>250+ тис. грн/міс</b></span></div>
@@ -180,6 +207,7 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
 <nav class="tabs" aria-label="Розділи">
   <div class="wrap" role="tablist">
     <button class="tab" role="tab" id="tab-leads" data-view="leads">Ліди <small id="tab-leads-n"></small></button>
+    <button class="tab" role="tab" id="tab-tiers" data-view="tiers">Лінійки</button>
     <button class="tab" role="tab" id="tab-segments" data-view="segments">Сегменти</button>
     <button class="tab" role="tab" id="tab-plan" data-view="plan">План спринту</button>
   </div>
@@ -199,6 +227,62 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
       <span class="status-note" id="db-note">Завантажую ліди…</span>
     </div>
     <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- ЛІНІЙКИ -->
+  <section class="wrap" id="view-tiers" data-view-panel="tiers" hidden>
+    <div>
+      <h2 class="h2">Три рівні мерчу</h2>
+      <p class="lead">Кожному бізнесу пропонуємо драбину з рівнів, а клієнт обирає, скільки взяти. Основний обсяг дає Т2, преміум лишається тільки для VIP.</p>
+    </div>
+    <div class="tiers">
+      <article class="tcard">
+        <div class="tcode">Т2</div>
+        <h3>Мультиколор-дрібниця</h3>
+        <div class="tprice">80–120<small>грн/шт, типово</small></div>
+        <div class="kv">
+          <div><b>Що</b>Брелок, значок, магніт у кольорах бренду: лого, маскот, символ</div>
+          <div><b>Тираж і термін</b>100–200 шт. за 3–4 дні</div>
+          <div><b>Діапазон</b>~50 грн плаский HueForge · ~250 грн об'ємна фігурка 5×5 см у 4 кольорах</div>
+          <div><b>Кому</b>Кожному працівнику, клієнтам, учасникам подій</div>
+          <div><b>Новий рік</b>Можна замовити до ~15 грудня</div>
+        </div>
+        <div class="cap"><span class="tnote">Потужність: велика, Snapmaker U1 + Prusa XL</span><div class="cap-bar"><i style="width:90%"></i></div></div>
+      </article>
+      <article class="tcard">
+        <div class="tcode">Т3</div>
+        <h3>Збірна фігурка</h3>
+        <div class="tprice">400–700<small>грн/шт</small></div>
+        <div class="kv">
+          <div><b>Що</b>Маскот 12–15 см з кольорових FDM-деталей, без фарбування</div>
+          <div><b>Тираж і термін</b>20–30 шт. за 7–10 днів</div>
+          <div><b>Діапазон</b>400–500 грн при 5–7 деталях · 600–700 грн при 25+ деталях</div>
+          <div><b>Кому</b>Команди, тімліди, ключові клієнти</div>
+          <div><b>Новий рік</b>Можна замовити до ~5 грудня</div>
+        </div>
+        <div class="cap"><span class="tnote">Потужність: середня, усі принтери паралельно</span><div class="cap-bar"><i style="width:55%"></i></div></div>
+      </article>
+      <article class="tcard vip">
+        <div class="tcode">Т1</div>
+        <h3>Преміум · лише VIP</h3>
+        <div class="tprice">1500–2500<small>грн/шт</small></div>
+        <div class="kv">
+          <div><b>Що</b>Фігурка ~14 см, FDM + SLA, фарбування вручну</div>
+          <div><b>Тираж і термін</b>5–15 шт. на клієнта, 2–3 тижні</div>
+          <div><b>Кому</b>Ключові партнери, нагороди, «Постаті»</div>
+          <div><b>Новий рік</b>Можна замовити до ~25 листопада</div>
+        </div>
+        <div class="cap"><span class="tnote">Потужність: до 30 шт. на місяць на всіх клієнтів</span><div class="cap-bar"><i style="width:18%"></i></div></div>
+      </article>
+    </div>
+    <div class="combo">
+      <h3 class="h2" style="font-size:clamp(28px,4vw,40px)">Типовий проєкт · компанія на 150 людей</h3>
+      <div class="combo-row"><span>150 брелоків Т2 з логотипом, ~100 грн</span><span>~15 000 грн</span></div>
+      <div class="combo-row"><span>25 збірних фігурок Т3 для тімлідів, ~500 грн</span><span>~12 500 грн</span></div>
+      <div class="combo-row"><span>10 преміум-фігурок Т1 для партнерів, ~2000 грн</span><span>~20 000 грн</span></div>
+      <div class="combo-row"><span>Разом, якщо взяти всі три рівні</span><span>~47 500 грн</span></div>
+      <p class="tnote">До цілі 250 тис. на місяць бракує ~100–125 тис., тобто 3–4 таких проєкти. Преміум при цьому впирається в 30 шт., тож у більшості проєктів основою мають бути Т2 і Т3.</p>
+    </div>
   </section>
 
   <!-- СЕГМЕНТИ -->
@@ -305,7 +389,7 @@ const isUrl=s=>/^https?:\/\//i.test(String(s||'').trim());
 const $=id=>document.getElementById(id);
 
 /* ---------- вкладки (hash) ---------- */
-const VIEWS=['leads','segments','plan'];
+const VIEWS=['leads','tiers','segments','plan'];
 function showView(){
   const h=(location.hash||'').slice(1); const v=VIEWS.includes(h)?h:'leads';
   document.querySelectorAll('[data-view-panel]').forEach(p=>p.hidden=p.dataset.viewPanel!==v);
@@ -337,13 +421,25 @@ $('segs').innerHTML=SEGMENTS.map(s=>`
 
 /* ---------- ліди ---------- */
 let leads=[]; let loaded=false; let canWrite=null; let db=null;
-const F={seg:new Set(),pri:new Set(),local:false,status:'',q:''};
+const F={seg:new Set(),pri:new Set(),wave:new Set(),niche:new Set(),tier:new Set(),local:false,status:'',q:''};
+const NICHES=['IT','Бренди','Послуги','Захід','Купували мерч'];
+const waveOf=l=>String(l.wave||1);
+const nichesOf=l=>String(l.niche||'').split(' + ').filter(Boolean);
+const tiersOf=l=>Array.isArray(l.tiers)?l.tiers:[];
+const nameQ=l=>String(l.company||'').replace(/\s*\(.*?\)/g,'').split(/\s+[—–]\s+/)[0].trim();
+const cityQ=l=>String(l.city||'').split(/[;,(]/)[0].trim();
 const openMsg=new Set();
 
 function renderFilters(){
   const cnt=(fn)=>leads.filter(fn).length;
   let h='';
   Object.entries(SEG).forEach(([k,s])=>{h+=`<button class="chip" data-f="seg" data-v="${k}" aria-pressed="${F.seg.has(k)}"><span class="dot" style="background:var(${s.v})"></span>${esc(s.name)} <span class="n">${cnt(l=>l.seg===k)}</span></button>`;});
+  h+='<span class="sep"></span>';
+  ['1','2'].forEach(w=>{h+=`<button class="chip" data-f="wave" data-v="${w}" aria-pressed="${F.wave.has(w)}">Хвиля ${w} <span class="n">${cnt(l=>waveOf(l)===w)}</span></button>`;});
+  h+='<span class="sep"></span>';
+  NICHES.forEach(n=>{h+=`<button class="chip" data-f="niche" data-v="${esc(n)}" aria-pressed="${F.niche.has(n)}">${esc(n)} <span class="n">${cnt(l=>nichesOf(l).includes(n))}</span></button>`;});
+  h+='<span class="sep"></span>';
+  ['T2','T3','T1'].forEach(t=>{h+=`<button class="chip" data-f="tier" data-v="${t}" aria-pressed="${F.tier.has(t)}">${t.replace('T','Т')} <span class="n">${cnt(l=>tiersOf(l).includes(t))}</span></button>`;});
   h+='<span class="sep"></span>';
   ['A','B','C'].forEach(p=>{h+=`<button class="chip" data-f="pri" data-v="${p}" aria-pressed="${F.pri.has(p)}">Пріоритет ${p} <span class="n">${cnt(l=>l.priority===p)}</span></button>`;});
   h+='<span class="sep"></span>';
@@ -387,16 +483,29 @@ function contactRows(l){
   return rows.join('')||'<div class="txt">Контакту поки немає, див. примітку.</div>';
 }
 
+function findLinks(l){
+  const n=nameQ(l),c=cityQ(l),e=encodeURIComponent;
+  const L=[];
+  if(l.website){const w=isUrl(l.website)?l.website:'https://'+String(l.website).replace(/^\/+/,'');L.push(['Сайт',w]);}
+  L.push(['Google',`https://www.google.com/search?q=${e(`${n} ${c} контакти`)}`]);
+  L.push(['Карти',`https://www.google.com/maps/search/${e(`${n} ${c}`)}`]);
+  L.push(['LinkedIn',`https://www.linkedin.com/search/results/companies/?keywords=${e(n)}`]);
+  L.push(['Instagram',`https://www.google.com/search?q=${e(`site:instagram.com ${n}`)}`]);
+  L.push(['ЄДРПОУ',`https://www.google.com/search?q=${e(`${n} ЄДРПОУ директор`)}`]);
+  return L.map(([t,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join('');
+}
 function card(l){
   const s=SEG[l.seg]||{name:l.segment,v:'--accent'}; const st=l.status||'новий';
   const dis=canWrite===false?'disabled':'';
   const src=String(l.source_url||'').split(/[;\s]+/).filter(isUrl)[0];
   return `<article class="card ${['відмова','пауза'].includes(st)?'done':''}" style="--segc:var(${s.v})" data-id="${esc(l.id)}">
-    <div class="c-top"><span class="pri ${esc(l.priority)}" title="Пріоритет ${esc(l.priority)}">${esc(l.priority)}</span><span class="seg">${esc(s.name)}</span>${l.local?'<span class="local">📍 зустріч</span>':''}</div>
-    <div><h3 class="c-name">${esc(l.company)}</h3><div class="c-city">${esc(l.city)}</div></div>
+    <div class="c-top"><span class="pri ${esc(l.priority)}" title="Пріоритет ${esc(l.priority)}">${esc(l.priority)}</span><span class="seg">${esc(s.name)}</span>${tiersOf(l).map(t=>`<span class="tier ${esc(t)}">${esc(t.replace('T','Т'))}</span>`).join('')}${l.local?'<span class="local">📍 зустріч</span>':''}</div>
+    <div><h3 class="c-name">${esc(l.company)}</h3><div class="c-city">${esc(l.city)}${l.niche&&l.wave==2?` · <span class="niche">${esc(l.niche)}</span>`:''}</div></div>
+    ${l.activity?`<div class="act"><b>Чи працює:</b> ${esc(l.activity)}</div>`:''}
     <div><div class="lbl">Чому вони</div><div class="txt">${esc(l.why_fit)}</div></div>
     <div class="offer"><div class="lbl">Що пропонуємо</div><div class="txt">${esc(l.offer_angle)}</div></div>
     <div><div class="lbl">Контакти</div><div class="contacts">${contactRows(l)}</div></div>
+    <div><div class="lbl">Шукати контакти</div><div class="find">${findLinks(l)}</div></div>
     ${l.notes?`<div><div class="lbl">Примітка</div><div class="txt">${esc(l.notes)}</div></div>`:''}
     ${src?`<div class="src">Джерело: <a href="${esc(src)}" target="_blank" rel="noopener">${esc(src.replace(/^https?:\/\/(www\.)?/,'').slice(0,60))}</a></div>`:''}
     <button class="msg-btn" data-msg="${esc(l.id)}" aria-expanded="${openMsg.has(l.id)}"><span>Перше повідомлення</span><span>${openMsg.has(l.id)?'сховати':'показати'}</span></button>
@@ -405,6 +514,7 @@ function card(l){
       <select id="st-${esc(l.id)}" data-field="status" aria-label="Статус" ${dis}>${STATUSES.map(x=>`<option ${x.k===st?'selected':''}>${esc(x.k)}</option>`).join('')}</select>
       <input id="dt-${esc(l.id)}" type="date" data-field="next_date" value="${esc(l.next_date||'')}" aria-label="Дата наступного кроку" ${dis}>
       <input id="nx-${esc(l.id)}" class="next" type="text" data-field="next_step" value="${esc(l.next_step||'')}" placeholder="Наступний крок, напр. «follow-up з фото маскота»" aria-label="Наступний крок" ${dis}>
+      <textarea id="mc-${esc(l.id)}" data-field="my_contacts" placeholder="Мої контакти: ім'я, пошта, телефон, Instagram, які ви знайшли" aria-label="Мої знайдені контакти" ${dis}>${esc(l.my_contacts||'')}</textarea>
     </div>
   </article>`;
 }
@@ -412,8 +522,9 @@ function card(l){
 function filtered(){
   const ord={A:0,B:1,C:2}; const sto=Object.fromEntries(STATUSES.map((s,i)=>[s.k,i]));
   return leads.filter(l=>(!F.seg.size||F.seg.has(l.seg))&&(!F.pri.size||F.pri.has(l.priority))&&(!F.local||l.local)
+    &&(!F.wave.size||F.wave.has(waveOf(l)))&&(!F.niche.size||nichesOf(l).some(n=>F.niche.has(n)))&&(!F.tier.size||tiersOf(l).some(t=>F.tier.has(t)))
     &&(!F.status||(l.status||'новий')===F.status)
-    &&(!F.q||[l.company,l.city,l.why_fit,l.offer_angle,l.what_they_do,l.notes].join(' ').toLowerCase().includes(F.q)))
+    &&(!F.q||[l.company,l.city,l.why_fit,l.offer_angle,l.what_they_do,l.notes,l.niche,l.my_contacts].join(' ').toLowerCase().includes(F.q)))
    .sort((a,b)=>(['відмова','пауза'].includes(a.status)-['відмова','пауза'].includes(b.status))||(ord[a.priority]-ord[b.priority])||a.seg.localeCompare(b.seg)||a.id.localeCompare(b.id));
 }
 let pending=false;
