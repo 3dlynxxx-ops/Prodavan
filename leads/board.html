@@ -358,7 +358,8 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
 <script>
 const STATUSES=[
   {k:'новий',c:'#9aa08c'},{k:'написали',c:'#5f8fb0'},{k:'відповів',c:'#7a52a3'},{k:'розмова/КП',c:'#c08a1e'},
-  {k:'зразок/прорахунок',c:'#d06d2c'},{k:'замовлення',c:'#2f7d32'},{k:'відмова',c:'#a33a2a'},{k:'пауза',c:'#6b6b6b'}];
+  {k:'зразок/прорахунок',c:'#d06d2c'},{k:'замовлення',c:'#2f7d32'},{k:'відмова',c:'#a33a2a'},{k:'пауза',c:'#6b6b6b'},{k:'наш клієнт',c:'#1b2d14'}];
+const DONE=['відмова','пауза','наш клієнт'];
 const SEG={
   S1:{name:'Книжкова ніша',v:'--s1'},S2:{name:'Корпоративні подарунки',v:'--s2'},S3:{name:'Агенції-партнери',v:'--s3'},
   S6:{name:'Опт у роздріб',v:'--s6'},S8:{name:'Нагороди та інституції',v:'--s8'}};
@@ -499,7 +500,7 @@ function card(l){
   const s=SEG[l.seg]||{name:l.segment,v:'--accent'}; const st=l.status||'новий';
   const dis=canWrite===false?'disabled':'';
   const src=String(l.source_url||'').split(/[;\s]+/).filter(isUrl)[0];
-  return `<article class="card ${['відмова','пауза'].includes(st)?'done':''}" style="--segc:var(${s.v})" data-id="${esc(l.id)}">
+  return `<article class="card ${DONE.includes(st)?'done':''}" style="--segc:var(${s.v})" data-id="${esc(l.id)}">
     <div class="c-top"><span class="pri ${esc(l.priority)}" title="Пріоритет ${esc(l.priority)}">${esc(l.priority)}</span><span class="seg">${esc(s.name)}</span>${tiersOf(l).map(t=>`<span class="tier ${esc(t)}">${esc(t.replace('T','Т'))}</span>`).join('')}${l.local?'<span class="local">📍 зустріч</span>':''}</div>
     <div><h3 class="c-name">${esc(l.company)}</h3><div class="c-city">${esc(l.city)}${l.niche&&l.wave>=2?` · <span class="niche">${esc(l.niche)}</span>`:''}</div></div>
     ${l.activity?`<div class="act"><b>Чи працює:</b> ${esc(l.activity)}</div>`:''}
@@ -526,7 +527,7 @@ function filtered(){
     &&(!F.wave.size||F.wave.has(waveOf(l)))&&(!F.niche.size||nichesOf(l).some(n=>F.niche.has(n)))&&(!F.tier.size||tiersOf(l).some(t=>F.tier.has(t)))
     &&(!F.status||(l.status||'новий')===F.status)
     &&(!F.q||[l.company,l.city,l.why_fit,l.offer_angle,l.what_they_do,l.notes,l.niche,l.my_contacts].join(' ').toLowerCase().includes(F.q)))
-   .sort((a,b)=>(['відмова','пауза'].includes(a.status)-['відмова','пауза'].includes(b.status))||(ord[a.priority]-ord[b.priority])||a.seg.localeCompare(b.seg)||a.id.localeCompare(b.id));
+   .sort((a,b)=>(DONE.includes(a.status)-DONE.includes(b.status))||(ord[a.priority]-ord[b.priority])||a.seg.localeCompare(b.seg)||a.id.localeCompare(b.id));
 }
 let pending=false;
 function renderGrid(){
