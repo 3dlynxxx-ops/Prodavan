@@ -7,7 +7,7 @@
 :root{
   --bg:#f5f0e8; --surface:#fffdf8; --surface-2:#ebe9d2; --ink:#1b2d14; --ink-soft:#4b5a40; --muted:#7a8270;
   --accent:#3f6b2a; --accent-mid:#9bb47f; --line:#d8d6bf; --band:#1b2d14; --band-fg:#f1f1da; --band-soft:#9bb47f;
-  --s1:#8a3b5c; --s2:#2c6a86; --s3:#7a52a3; --s6:#9a6414; --s8:#3f6b2a;
+  --s1:#8a3b5c; --s4:#b3471d; --s2:#2c6a86; --s3:#7a52a3; --s6:#9a6414; --s8:#3f6b2a;
   --ok:#2f7d32; --warn:#a86b00; --bad:#a33a2a;
   --f-display:'Alumni Sans','Arial Narrow',sans-serif; --f-text:'Onest',system-ui,-apple-system,sans-serif;
   --r:10px;
@@ -15,11 +15,11 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#10180d; --surface:#172214; --surface-2:#1f2d1a; --ink:#ecebd6; --ink-soft:#c3c6ad; --muted:#8f977f;
   --accent:#a9c98a; --accent-mid:#6f8f55; --line:#2c3b25; --band:#0a1108; --band-fg:#f1f1da; --band-soft:#9bb47f;
-  --s1:#e08fb0; --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}}
+  --s1:#e08fb0; --s4:#f0956b; --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#10180d; --surface:#172214; --surface-2:#1f2d1a; --ink:#ecebd6; --ink-soft:#c3c6ad; --muted:#8f977f;
   --accent:#a9c98a; --accent-mid:#6f8f55; --line:#2c3b25; --band:#0a1108; --band-fg:#f1f1da; --band-soft:#9bb47f;
-  --s1:#e08fb0; --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}
+  --s1:#e08fb0; --s4:#f0956b; --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:15px;line-height:1.5}
 a{color:var(--accent)}
@@ -361,7 +361,7 @@ const STATUSES=[
   {k:'зразок/прорахунок',c:'#d06d2c'},{k:'замовлення',c:'#2f7d32'},{k:'відмова',c:'#a33a2a'},{k:'пауза',c:'#6b6b6b'},{k:'наш клієнт',c:'#1b2d14'}];
 const DONE=['відмова','пауза','наш клієнт'];
 const SEG={
-  S1:{name:'Книжкова ніша',v:'--s1'},S2:{name:'Корпоративні подарунки',v:'--s2'},S3:{name:'Агенції-партнери',v:'--s3'},
+  S1:{name:'Книжкова ніша',v:'--s1'},S4:{name:'Настільні ігри',v:'--s4'},S2:{name:'Корпоративні подарунки',v:'--s2'},S3:{name:'Агенції-партнери',v:'--s3'},
   S6:{name:'Опт у роздріб',v:'--s6'},S8:{name:'Нагороди та інституції',v:'--s8'}};
 const SEGMENTS=[
   {id:'S2',v:'--s2',now:true,name:'Корпоративні подарунки та маскоти',who:'IT і продуктові компанії, фінтех, бренди з персонажем. HR, employer branding, маркетинг.',offer:'Три рівні: брелоки з лого для всієї команди, збірна фігурка маскота для тімлідів, розфарбований преміум для VIP.',price:'Т2 ~80–120 грн · Т3 400–700 грн · Т1 1500–2500 грн (до 30 шт./міс)',when:'Зараз. Новорічні замовлення погоджують до ~25 листопада.'},
@@ -425,6 +425,7 @@ let leads=[]; let loaded=false; let canWrite=null; let db=null;
 const F={seg:new Set(),pri:new Set(),wave:new Set(),niche:new Set(),tier:new Set(),local:false,status:'',q:''};
 let NICHES=['IT','Бренди','Послуги','Захід','Купували мерч'];
 const waveOf=l=>String(l.wave||1);
+const WAVES={'1':'Хвиля 1','2':'Хвиля 2 · бізнес','3':'Хвиля 3 · книжки','4':'Хвиля 4 · настолки'};
 const nichesOf=l=>String(l.niche||'').split(' + ').filter(Boolean);
 const tiersOf=l=>Array.isArray(l.tiers)?l.tiers:[];
 const nameQ=l=>String(l.company||'').replace(/\s*\(.*?\)/g,'').split(/\s+[—–]\s+/)[0].trim();
@@ -437,7 +438,7 @@ function renderFilters(){
   let h='';
   Object.entries(SEG).forEach(([k,s])=>{h+=`<button class="chip" data-f="seg" data-v="${k}" aria-pressed="${F.seg.has(k)}"><span class="dot" style="background:var(${s.v})"></span>${esc(s.name)} <span class="n">${cnt(l=>l.seg===k)}</span></button>`;});
   h+='<span class="sep"></span>';
-  [['1','Хвиля 1'],['2','Хвиля 2 · бізнес'],['3','Хвиля 3 · книжки']].forEach(([w,t])=>{h+=`<button class="chip" data-f="wave" data-v="${w}" aria-pressed="${F.wave.has(w)}">${t} <span class="n">${cnt(l=>waveOf(l)===w)}</span></button>`;});
+  [...new Set(leads.map(waveOf))].sort().map(w=>[w,WAVES[w]||('Хвиля '+w)]).forEach(([w,t])=>{h+=`<button class="chip" data-f="wave" data-v="${w}" aria-pressed="${F.wave.has(w)}">${t} <span class="n">${cnt(l=>waveOf(l)===w)}</span></button>`;});
   h+='<span class="sep"></span>';
   NICHES.forEach(n=>{h+=`<button class="chip" data-f="niche" data-v="${esc(n)}" aria-pressed="${F.niche.has(n)}">${esc(n)} <span class="n">${cnt(l=>nichesOf(l).includes(n))}</span></button>`;});
   h+='<span class="sep"></span>';
