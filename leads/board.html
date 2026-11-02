@@ -194,7 +194,7 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
   <div class="wrap">
     <div>
       <div class="brand">3D Lynx <span>ліди</span></div>
-      <div class="sub">Спринт 1 · листопад 2026 · фокус: новорічний брендований мерч для бізнесу</div>
+      <div class="sub">Спринт 1 · листопад 2026 · бізнес-мерч і книжкова ніша</div>
     </div>
     <div class="goal" aria-label="Ціль по виручці">
       <div class="goal-row"><span>Зараз <b>100–150 тис.</b></span><span>Ціль <b>250+ тис. грн/міс</b></span></div>
@@ -317,7 +317,7 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
       <div class="panel">
         <h3>Ритм на кожен лід</h3>
         <div class="steps">
-          <div class="step"><span class="d">День 0</span><div><b>Перше повідомлення</b><p>Персоналізоване, з одним фото. Текст уже лежить у картці ліда.</p></div></div>
+          <div class="step"><span class="d">День 0</span><div><b>Перше повідомлення</b><p>По-людськи, від Антона, з фото робіт. Без цін і дедлайнів, мета — дзвінок або зустріч. Текст уже лежить у картці ліда.</p></div></div>
           <div class="step"><span class="d">+3</span><div><b>Follow-up 1</b><p>Новий аргумент або фото, без «чи бачили ви мій лист».</p></div></div>
           <div class="step"><span class="d">+7</span><div><b>Follow-up 2</b><p>Через інший канал: дзвінок, DM у соцмережі.</p></div></div>
           <div class="step"><span class="d">+14</span><div><b>Закриваємо</b><p>«Якщо неактуально, підкажіть, кому написати». Далі статус «пауза».</p></div></div>
@@ -436,7 +436,7 @@ function renderFilters(){
   let h='';
   Object.entries(SEG).forEach(([k,s])=>{h+=`<button class="chip" data-f="seg" data-v="${k}" aria-pressed="${F.seg.has(k)}"><span class="dot" style="background:var(${s.v})"></span>${esc(s.name)} <span class="n">${cnt(l=>l.seg===k)}</span></button>`;});
   h+='<span class="sep"></span>';
-  ['1','2'].forEach(w=>{h+=`<button class="chip" data-f="wave" data-v="${w}" aria-pressed="${F.wave.has(w)}">Хвиля ${w} <span class="n">${cnt(l=>waveOf(l)===w)}</span></button>`;});
+  [['1','Хвиля 1'],['2','Хвиля 2 · бізнес'],['3','Хвиля 3 · книжки']].forEach(([w,t])=>{h+=`<button class="chip" data-f="wave" data-v="${w}" aria-pressed="${F.wave.has(w)}">${t} <span class="n">${cnt(l=>waveOf(l)===w)}</span></button>`;});
   h+='<span class="sep"></span>';
   NICHES.forEach(n=>{h+=`<button class="chip" data-f="niche" data-v="${esc(n)}" aria-pressed="${F.niche.has(n)}">${esc(n)} <span class="n">${cnt(l=>nichesOf(l).includes(n))}</span></button>`;});
   h+='<span class="sep"></span>';
