@@ -1,0 +1,477 @@
+<title>3D Lynx Ліди</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alumni+Sans:wght@500;700;800&family=Onest:wght@400;500;600&display=swap">
+<style>
+/* Макет: зелена шапка-штамп майстерні → вкладки → робоча дошка карток лідів. Айдентика сайту 3D Lynx: зелений логотипа + теплий папір. */
+:root{
+  --bg:#f5f0e8; --surface:#fffdf8; --surface-2:#ebe9d2; --ink:#1b2d14; --ink-soft:#4b5a40; --muted:#7a8270;
+  --accent:#3f6b2a; --accent-mid:#9bb47f; --line:#d8d6bf; --band:#1b2d14; --band-fg:#f1f1da; --band-soft:#9bb47f;
+  --s2:#2c6a86; --s3:#7a52a3; --s6:#9a6414; --s8:#3f6b2a;
+  --ok:#2f7d32; --warn:#a86b00; --bad:#a33a2a;
+  --f-display:'Alumni Sans','Arial Narrow',sans-serif; --f-text:'Onest',system-ui,-apple-system,sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10180d; --surface:#172214; --surface-2:#1f2d1a; --ink:#ecebd6; --ink-soft:#c3c6ad; --muted:#8f977f;
+  --accent:#a9c98a; --accent-mid:#6f8f55; --line:#2c3b25; --band:#0a1108; --band-fg:#f1f1da; --band-soft:#9bb47f;
+  --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10180d; --surface:#172214; --surface-2:#1f2d1a; --ink:#ecebd6; --ink-soft:#c3c6ad; --muted:#8f977f;
+  --accent:#a9c98a; --accent-mid:#6f8f55; --line:#2c3b25; --band:#0a1108; --band-fg:#f1f1da; --band-soft:#9bb47f;
+  --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:15px;line-height:1.5}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1360px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0}
+
+/* шапка */
+.band{background:var(--band);color:var(--band-fg)}
+.band .wrap{padding-block:28px 22px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end}
+.brand{font-family:var(--f-display);font-weight:800;text-transform:uppercase;line-height:.8;font-size:clamp(56px,9vw,112px);letter-spacing:.01em}
+.brand span{color:var(--band-soft)}
+.sub{margin-top:10px;color:var(--band-soft);font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+.goal{display:grid;gap:8px;min-width:0;max-width:420px}
+.goal-row{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--band-soft)}
+.goal-row b{color:var(--band-fg);font-weight:600}
+.goal-bar{height:12px;border-radius:6px;background:rgba(241,241,218,.14);position:relative;overflow:hidden}
+.goal-bar i{position:absolute;inset:0 auto 0 0;background:var(--band-soft);border-radius:6px}
+.goal-bar em{position:absolute;inset:0 auto 0 0;background:repeating-linear-gradient(135deg,rgba(241,241,218,.55) 0 6px,rgba(241,241,218,.25) 6px 12px);border-radius:6px}
+.goal-note{font-size:13px;color:var(--band-fg);opacity:.85}
+
+/* вкладки */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--band)}
+.tabs .wrap{display:flex;gap:4px;overflow-x:auto}
+.tab{appearance:none;border:0;background:none;padding:14px 16px 12px;font-family:var(--f-display);font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab small{font-family:var(--f-text);font-size:12px;font-weight:600;margin-left:6px;color:var(--muted)}
+main .wrap{padding-block:24px 64px;display:grid;gap:24px}
+
+/* конвеєр статусів */
+.pipe{display:grid;gap:10px}
+.pipe-bar{display:flex;height:34px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.pipe-bar span{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;min-width:0;overflow:hidden;white-space:nowrap}
+.pipe-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink-soft)}
+.pipe-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* фільтри */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip .dot{width:8px;height:8px;border-radius:50%}
+.chip .n{opacity:.65;font-variant-numeric:tabular-nums}
+.sep{width:1px;height:24px;background:var(--line);margin-inline:4px}
+.search{flex:1 1 200px;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px}
+.status-note{font-size:13px;color:var(--ink-soft)}
+.status-note.err{color:var(--bad)}
+
+/* картки */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:16px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:12px;min-width:0;border-top:4px solid var(--segc)}
+.card.done{opacity:.6}
+.c-top{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pri{font-family:var(--f-display);font-weight:800;font-size:18px;line-height:1;width:26px;height:26px;border-radius:6px;display:grid;place-items:center}
+.pri.A{background:var(--accent);color:var(--bg)}
+.pri.B{border:2px solid var(--accent);color:var(--accent)}
+.pri.C{border:1px dashed var(--muted);color:var(--muted)}
+.seg{font-size:12px;font-weight:600;color:var(--segc);border:1px solid var(--segc);border-radius:999px;padding:2px 9px}
+.local{font-size:12px;font-weight:600;background:var(--surface-2);border-radius:999px;padding:2px 9px;color:var(--ink-soft)}
+.c-name{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:.95;overflow-wrap:anywhere}
+.c-city{font-size:13px;color:var(--muted);margin-top:4px}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.txt{font-size:14px;color:var(--ink-soft);overflow-wrap:anywhere}
+.offer{background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.offer .txt{color:var(--ink)}
+.contacts{display:grid;gap:4px;font-size:13px}
+.ct{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:8px;align-items:center}
+.ct .k{color:var(--muted)}
+.ct .v{overflow-wrap:anywhere;min-width:0}
+.mini{appearance:none;border:1px solid var(--line);background:none;border-radius:6px;font-size:12px;padding:2px 8px;cursor:pointer;color:var(--ink-soft)}
+.mini:hover{border-color:var(--accent);color:var(--accent)}
+.src{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.work{display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:8px;border-top:1px dashed var(--line);padding-top:12px}
+.work select,.work input{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px;min-width:0;width:100%}
+.work .next{grid-column:1/-1}
+.msg-btn{appearance:none;border:0;background:var(--ink);color:var(--bg);border-radius:8px;padding:9px 12px;font-weight:600;cursor:pointer;text-align:left;display:flex;justify-content:space-between;gap:8px}
+.msg{white-space:pre-wrap;font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;user-select:text}
+.empty{padding:40px 16px;text-align:center;color:var(--ink-soft);border:1px dashed var(--line);border-radius:var(--r)}
+
+/* сегменти */
+.h2{font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:clamp(34px,5vw,52px);line-height:.9}
+.lead{max-width:68ch;color:var(--ink-soft)}
+.segs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.segc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;align-content:start;border-left:4px solid var(--segc)}
+.segc.later{border-left-style:dashed}
+.segc h3{font-family:var(--f-display);font-size:28px;font-weight:700;line-height:.95}
+.wave{font-size:12px;font-weight:600;display:inline-block;padding:2px 9px;border-radius:999px;background:var(--surface-2);color:var(--ink-soft);justify-self:start}
+.wave.now{background:var(--accent);color:var(--bg)}
+.kv{display:grid;gap:6px;font-size:14px}
+.kv b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* сезонна шкала */
+.tl-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;overflow-x:auto}
+.tl{position:relative;min-width:760px;height:240px}
+.tl-axis{position:absolute;left:0;right:0;top:120px;height:2px;background:var(--line)}
+.tl-month{position:absolute;top:128px;font-size:12px;color:var(--muted);transform:translateX(-50%);text-transform:uppercase;letter-spacing:.06em}
+.tl-tick{position:absolute;top:114px;width:1px;height:14px;background:var(--line)}
+.tl-today{position:absolute;top:20px;bottom:40px;width:2px;background:var(--bad)}
+.tl-today span{position:absolute;top:-18px;left:4px;font-size:11px;font-weight:600;color:var(--bad);white-space:nowrap}
+.ev{position:absolute;width:150px;font-size:12px;line-height:1.3}
+.ev::before{content:"";position:absolute;left:0;width:2px;background:var(--segc)}
+.ev.up{bottom:122px;padding:0 0 8px 8px}.ev.up::before{top:0;bottom:-2px}
+.ev.down{top:150px;padding:8px 0 0 8px}.ev.down::before{top:-28px;bottom:0}
+.ev b{display:block;color:var(--segc);font-size:12px}
+
+/* план */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;align-content:start;min-width:0}
+.panel h3{font-family:var(--f-display);font-size:28px;font-weight:700;text-transform:uppercase;line-height:.9}
+.funnel{display:grid;gap:8px}
+.f-row{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.f-bar{height:38px;border-radius:8px;background:var(--accent);color:var(--bg);display:flex;align-items:center;padding:0 12px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;min-width:max-content}
+.f-row small{color:var(--muted);font-size:12px}
+.steps{display:grid;gap:0;counter-reset:s}
+.step{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.step:last-child{border-bottom:0}
+.step .d{font-family:var(--f-display);font-size:26px;font-weight:800;color:var(--accent);line-height:1}
+.step p{margin:2px 0 0;font-size:14px;color:var(--ink-soft)}
+.week{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.day{background:var(--surface-2);border-radius:8px;padding:10px;display:grid;gap:4px;align-content:start}
+.day b{font-family:var(--f-display);font-size:24px;line-height:1}
+.day span{font-size:12px;color:var(--ink-soft)}
+.day em{font-style:normal;font-size:12px;font-weight:600;color:var(--accent)}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.check li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;font-size:14px}
+.check li::before{content:"";width:16px;height:16px;border:2px solid var(--accent);border-radius:4px;margin-top:2px}
+.check b{font-weight:600}
+.q{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.q li{font-size:14px;background:var(--surface-2);border-radius:8px;padding:8px 10px}
+.q li b{color:var(--warn)}
+.foot{font-size:12px;color:var(--muted)}
+
+@media (max-width:640px){
+  .band .wrap{grid-template-columns:minmax(0,1fr)}
+  .goal{max-width:none}
+  .tab{font-size:20px;padding-inline:10px}
+  .work{grid-template-columns:minmax(0,1fr)}
+  .week{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:no-preference){.card{transition:opacity .2s}}
+</style>
+
+<header class="band">
+  <div class="wrap">
+    <div>
+      <div class="brand">3D Lynx <span>ліди</span></div>
+      <div class="sub">Спринт 1 · листопад 2026 · корпоративні, агенції, опт, нагороди</div>
+    </div>
+    <div class="goal" aria-label="Ціль по виручці">
+      <div class="goal-row"><span>Зараз <b>100–150 тис.</b></span><span>Ціль <b>250+ тис. грн/міс</b></span></div>
+      <div class="goal-bar"><em style="width:60%"></em><i style="width:40%"></i></div>
+      <div class="goal-note">Не вистачає ~100–125 тис. щомісяця. Одне замовлення на 50 фігурок ≈ 75 тис. грн, а 10 фігурок ≈ 20 тис.</div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Розділи">
+  <div class="wrap" role="tablist">
+    <button class="tab" role="tab" id="tab-leads" data-view="leads">Ліди <small id="tab-leads-n"></small></button>
+    <button class="tab" role="tab" id="tab-segments" data-view="segments">Сегменти</button>
+    <button class="tab" role="tab" id="tab-plan" data-view="plan">План спринту</button>
+  </div>
+</nav>
+
+<main>
+  <!-- ЛІДИ -->
+  <section class="wrap" id="view-leads" data-view-panel="leads">
+    <div class="pipe" aria-label="Воронка за статусами">
+      <div class="pipe-bar" id="pipe-bar"></div>
+      <div class="pipe-legend" id="pipe-legend"></div>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="filters">
+      <input class="search" id="q" type="search" placeholder="Пошук: назва, місто, текст…" aria-label="Пошук по лідах">
+      <select class="chip" id="f-status" aria-label="Фільтр за статусом"></select>
+      <span class="status-note" id="db-note">Завантажую ліди…</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- СЕГМЕНТИ -->
+  <section class="wrap" id="view-segments" data-view-panel="segments" hidden>
+    <div>
+      <h2 class="h2">8 сегментів</h2>
+      <p class="lead">Кожному сегменту пропонуємо одну конкретну річ, а не «ми робимо 3D-друк». Суцільна смуга зліва означає, що сегмент у роботі зараз, пунктирна — що черга до нього дійде пізніше.</p>
+    </div>
+    <div class="segs" id="segs"></div>
+    <div>
+      <h2 class="h2">Сезон і дедлайни</h2>
+      <p class="lead">Коли писати і до якої дати треба встигнути. Дати 2027 року орієнтовні, взяті з минулих років.</p>
+    </div>
+    <div class="tl-box"><div class="tl" id="tl"></div></div>
+  </section>
+
+  <!-- ПЛАН -->
+  <section class="wrap" id="view-plan" data-view-panel="plan" hidden>
+    <div>
+      <h2 class="h2">Як працюємо зі списком</h2>
+      <p class="lead">Ви продаєте самі, 10–15 годин на тиждень. Ось як отримати з цього списку 2–3 замовлення в листопаді.</p>
+    </div>
+    <div class="cols">
+      <div class="panel">
+        <h3>Воронка спринту</h3>
+        <div class="funnel">
+          <div class="f-row"><div class="f-bar" style="width:100%">50–60 написали</div><small>за 2 тижні, спочатку пріоритет A</small></div>
+          <div class="f-row"><div class="f-bar" style="width:62%">6–10 розмов</div><small>10–20% відповідають</small></div>
+          <div class="f-row"><div class="f-bar" style="width:34%">2–3 замовлення</div><small>20–30% розмов, саме ваша потужність на листопад</small></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Ритм на кожен лід</h3>
+        <div class="steps">
+          <div class="step"><span class="d">День 0</span><div><b>Перше повідомлення</b><p>Персоналізоване, з одним фото. Текст уже лежить у картці ліда.</p></div></div>
+          <div class="step"><span class="d">+3</span><div><b>Follow-up 1</b><p>Новий аргумент або фото, без «чи бачили ви мій лист».</p></div></div>
+          <div class="step"><span class="d">+7</span><div><b>Follow-up 2</b><p>Через інший канал: дзвінок, DM у соцмережі.</p></div></div>
+          <div class="step"><span class="d">+14</span><div><b>Закриваємо</b><p>«Якщо неактуально, підкажіть, кому написати». Далі статус «пауза».</p></div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Тиждень</h3>
+        <div class="week">
+          <div class="day"><b>Пн</b><em>2 год</em><span>10–15 перших повідомлень лідам A</span></div>
+          <div class="day"><b>Ср</b><em>1,5 год</em><span>Follow-up і відповіді</span></div>
+          <div class="day"><b>Пт</b><em>1,5 год</em><span>Дзвінки, підсумок тижня</span></div>
+        </div>
+        <p class="foot">Решта 5–10 годин іде на розмови, прорахунки й зразки, тобто на гроші.</p>
+      </div>
+      <div class="panel">
+        <h3>Підготувати до старту</h3>
+        <ul class="check">
+          <li><span><b>Демо-маскот рисі.</b> Фото етапів: друк → ґрунт → фарбування. Головний візуал для корпоративних клієнтів і агенцій.</span></li>
+          <li><span><b>Демо-нагорода.</b> Статуетка на постаменті з табличкою. Для премій і вишів.</span></li>
+          <li><span><b>Фото «Постатей».</b> Однакова зйомка: вся лінійка + 3 крупні плани.</span></li>
+          <li><span><b>Пошта.</b> Перевірити SPF/DKIM/DMARC для contact@3dlynx.com.ua, не більше 20–25 нових листів на день.</span></li>
+          <li><span><b>Показувати тільки своє.</b> Без фан-арту (Marvel, Warhammer) і без проєктів під NDA.</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Відкриті питання</h3>
+        <ul class="q">
+          <li><b>?</b> Роздрібна ціна однієї «Постаті». Від неї рахуються опт і консигнація.</li>
+          <li><b>?</b> Знижка агенціям-партнерам: пропоную −15%.</li>
+          <li><b>?</b> Моделювання маскота чи нагороди: входить у тираж чи оплачується окремо.</li>
+          <li><b>?</b> Скільки «Постатей» на складі, щоб відправити магазину за 1–3 дні.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const STATUSES=[
+  {k:'новий',c:'#9aa08c'},{k:'написали',c:'#5f8fb0'},{k:'відповів',c:'#7a52a3'},{k:'розмова/КП',c:'#c08a1e'},
+  {k:'зразок/прорахунок',c:'#d06d2c'},{k:'замовлення',c:'#2f7d32'},{k:'відмова',c:'#a33a2a'},{k:'пауза',c:'#6b6b6b'}];
+const SEG={
+  S2:{name:'Корпоративні подарунки',v:'--s2'},S3:{name:'Агенції-партнери',v:'--s3'},
+  S6:{name:'Опт у роздріб',v:'--s6'},S8:{name:'Нагороди та інституції',v:'--s8'}};
+const SEGMENTS=[
+  {id:'S2',v:'--s2',now:true,name:'Корпоративні подарунки та маскоти',who:'IT і продуктові компанії, фінтех, бренди з персонажем. HR, employer branding, маркетинг.',offer:'Маскот компанії як розфарбована фігурка на стіл. Подарунок команді чи партнерам, від 10 шт.',price:'10 шт. ≈ 1900–2000 грн/шт · 50 шт. ≈ 1500 грн/шт',when:'Зараз. Новорічні замовлення погоджують до ~25 листопада.'},
+  {id:'S3',v:'--s3',now:true,name:'Агенції-партнери',who:'Агенції бізнес-подарунків і мерчу, івент- і брендингові агенції, виробники нагород без власного 3D.',offer:'Нова категорія в їхньому каталозі: кастомні фігурки й нагороди під їхнім брендом, ми виробляємо.',price:'Партнерська ціна −15% [?] від ціни для кінцевого клієнта',when:'Зараз і весь рік. Один партнер дає постійний потік замовлень.'},
+  {id:'S6',v:'--s6',now:true,name:'Опт у роздріб',who:'Незалежні книгарні, концепт-стори, сувенірні крамниці, гік-шопи.',offer:'«Постаті» і декор для полиці. Пробна партія на консигнацію до Різдва.',price:'Опт ≈ 55–60%, консигнація ≈ 65–70% від роздрібної [?]',when:'Зараз. Магазини закуповують до ~10 грудня.'},
+  {id:'S8',v:'--s8',now:true,name:'Нагороди та інституції',who:'Премії, конкурси, конференції; університети імені «Постатей»; УжНУ.',offer:'Власна статуетка-символ премії. Для вишів: фігурка їхнього патрона як офіційний подарунок.',price:'1500–2500 грн/шт залежно від тиражу',when:'Писати за 1,5–2 місяці до церемонії. Вишам будь-коли.'},
+  {id:'S1',v:'--accent',now:false,name:'Книжкова екосистема',who:'Видавництва, автори, книжкові фестивалі.',offer:'Мерч до книжкових серій, бонуси до передзамовлень, фігурки персонажів.',price:'Є готова книжкова презентація',when:'Спринт 2 (грудень). Книжковий Арсенал 27–30 травня.'},
+  {id:'S4',v:'--accent',now:false,name:'Настолки, геймдев, поп-культура',who:'Видавці настільних ігор, геймдев-студії, творці контенту.',offer:'Мініатюри на 16K-смолі, прототипи настолок, колекційний мерч.',price:'—',when:'Спринт 2'},
+  {id:'S7',v:'--accent',now:false,name:'Музеї та меморіали',who:'Літературні музеї Франка, Лесі, Шевченка, Котляревського; туристичні центри.',offer:'«Постаті» в музейні крамниці, кастомні сувеніри, тактильні моделі.',price:'—',when:'Спринт 2'},
+  {id:'S5',v:'--accent',now:false,name:'Оборонка',who:'Виробники дронів і обладнання, кластери, Brave1.',offer:'Кріплення, корпуси, адаптери з PA і матеріалів з карбоном.',price:'—',when:'Окремий трек, без публічного аутрічу'},
+];
+const EVENTS=[
+  {d:'2026-11-25',t:'Корпоративні новорічні замовлення',s:'--s2',pos:'up'},
+  {d:'2026-12-10',t:'Магазини: закупівля до Різдва',s:'--s6',pos:'down'},
+  {d:'2026-12-17',t:'ПЕН: премія Шевельова (зарано для нової статуетки)',s:'--s8',pos:'up'},
+  {d:'2027-01-20',t:'День заснування ЛНУ ім. Франка',s:'--s8',pos:'down'},
+  {d:'2027-02-25',t:'День народження Лесі Українки (ВНУ)',s:'--s8',pos:'up'},
+  {d:'2027-03-09',t:'Шевченко, КНУ. Tech360 (орієнтовно)',s:'--s8',pos:'down'},
+  {d:'2027-05-21',t:'ПЕН: премія Ґонґадзе',s:'--s8',pos:'up'},
+  {d:'2027-05-27',t:'Книжковий Арсенал, 27–30 тра',s:'--accent',pos:'down'},
+];
+const TODAY=new Date();
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isUrl=s=>/^https?:\/\//i.test(String(s||'').trim());
+const $=id=>document.getElementById(id);
+
+/* ---------- вкладки (hash) ---------- */
+const VIEWS=['leads','segments','plan'];
+function showView(){
+  const h=(location.hash||'').slice(1); const v=VIEWS.includes(h)?h:'leads';
+  document.querySelectorAll('[data-view-panel]').forEach(p=>p.hidden=p.dataset.viewPanel!==v);
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.view===v)));
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{location.hash=t.dataset.view;showView()}));
+addEventListener('hashchange',showView); showView();
+
+/* ---------- сегменти й шкала ---------- */
+$('segs').innerHTML=SEGMENTS.map(s=>`
+  <article class="segc ${s.now?'':'later'}" style="--segc:var(${s.v})">
+    <span class="wave ${s.now?'now':''}">${s.now?'Спринт 1 · зараз':esc(s.when)}</span>
+    <h3>${esc(s.name)}</h3>
+    <div class="kv"><div><b>Кому</b>${esc(s.who)}</div><div><b>Що пропонуємо</b>${esc(s.offer)}</div>
+    ${s.price!=='—'?`<div><b>Ціна</b>${esc(s.price)}</div>`:''}${s.now?`<div><b>Коли</b>${esc(s.when)}</div>`:''}</div>
+  </article>`).join('');
+(function timeline(){
+  const start=new Date('2026-11-01'),end=new Date('2027-06-05'),span=end-start;
+  const x=d=>((new Date(d)-start)/span*100);
+  let h='<div class="tl-axis"></div>';
+  const months=['лис','гру','січ','лют','бер','кві','тра','чер'];
+  for(let i=0;i<8;i++){const d=new Date(2026,10+i,1);const p=x(d);if(p>100)break;
+    h+=`<div class="tl-tick" style="left:${p}%"></div><div class="tl-month" style="left:${Math.min(97,Math.max(2,p+6))}%">${months[i]}</div>`;}
+  const tp=x(TODAY); if(tp>=0&&tp<=100) h+=`<div class="tl-today" style="left:${tp}%"><span>сьогодні</span></div>`;
+  EVENTS.forEach(e=>{const p=Math.min(x(e.d),84);
+    h+=`<div class="ev ${e.pos}" style="left:${p}%;--segc:var(${e.s})"><b>${new Date(e.d).toLocaleDateString('uk-UA',{day:'numeric',month:'short'})}</b>${esc(e.t)}</div>`;});
+  $('tl').innerHTML=h;
+})();
+
+/* ---------- ліди ---------- */
+let leads=[]; let loaded=false; let canWrite=null; let db=null;
+const F={seg:new Set(),pri:new Set(),local:false,status:'',q:''};
+const openMsg=new Set();
+
+function renderFilters(){
+  const cnt=(fn)=>leads.filter(fn).length;
+  let h='';
+  Object.entries(SEG).forEach(([k,s])=>{h+=`<button class="chip" data-f="seg" data-v="${k}" aria-pressed="${F.seg.has(k)}"><span class="dot" style="background:var(${s.v})"></span>${esc(s.name)} <span class="n">${cnt(l=>l.seg===k)}</span></button>`;});
+  h+='<span class="sep"></span>';
+  ['A','B','C'].forEach(p=>{h+=`<button class="chip" data-f="pri" data-v="${p}" aria-pressed="${F.pri.has(p)}">Пріоритет ${p} <span class="n">${cnt(l=>l.priority===p)}</span></button>`;});
+  h+='<span class="sep"></span>';
+  h+=`<button class="chip" data-f="local" aria-pressed="${F.local}">📍 Закарпаття, можна зустрітись <span class="n">${cnt(l=>l.local)}</span></button>`;
+  $('filters').innerHTML=h;
+  const sel=$('f-status'); const cur=F.status;
+  sel.innerHTML=`<option value="">Усі статуси</option>`+STATUSES.map(s=>`<option value="${esc(s.k)}">${esc(s.k)} · ${cnt(l=>(l.status||'новий')===s.k)}</option>`).join('');
+  sel.value=cur;
+}
+$('filters').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  const f=b.dataset.f,v=b.dataset.v;
+  if(f==='local') F.local=!F.local; else {F[f].has(v)?F[f].delete(v):F[f].add(v);}
+  renderAll();
+});
+$('f-status').addEventListener('change',e=>{F.status=e.target.value;renderAll()});
+$('q').addEventListener('input',e=>{F.q=e.target.value.trim().toLowerCase();renderGrid()});
+
+function renderPipe(){
+  const total=leads.length||1;
+  $('pipe-bar').innerHTML=STATUSES.map(s=>{const n=leads.filter(l=>(l.status||'новий')===s.k).length;
+    return n?`<span style="flex:${n};background:${s.c}" title="${esc(s.k)}: ${n}">${n}</span>`:''}).join('');
+  $('pipe-legend').innerHTML=STATUSES.map(s=>{const n=leads.filter(l=>(l.status||'новий')===s.k).length;
+    return `<span><i style="background:${s.c}"></i>${esc(s.k)} · ${n}</span>`}).join('');
+  $('tab-leads-n').textContent=leads.length?String(leads.length):'';
+}
+
+function contactRows(l){
+  const rows=[];
+  const add=(k,v,href)=>{v=String(v||'').trim(); if(!v) return;
+    const shown=href?`<a href="${esc(href)}" target="_blank" rel="noopener">${esc(v.replace(/^https?:\/\/(www\.)?/,''))}</a>`:esc(v);
+    rows.push(`<div class="ct"><span class="k">${k}</span><span class="v">${shown}</span><button class="mini" data-copy="${esc(v)}">копіювати</button></div>`);};
+  add('Email',l.email); add('Телефон',l.phone);
+  if(l.telegram){const t=l.telegram.trim(); add('Telegram',t,isUrl(t)?t:(t.startsWith('@')?'https://t.me/'+t.slice(1):null));}
+  if(l.instagram){const t=l.instagram.trim(); add('Instagram',t,isUrl(t)?t:(t.startsWith('@')?'https://instagram.com/'+t.slice(1):null));}
+  if(l.linkedin) add('LinkedIn',l.linkedin,isUrl(l.linkedin)?l.linkedin:null);
+  if(l.contact_form) add('Ще',l.contact_form,isUrl(l.contact_form)?l.contact_form:null);
+  if(l.website) add('Сайт',l.website,isUrl(l.website)?l.website:('https://'+l.website.replace(/^\/+/,'')));
+  if(l.contact_name) rows.unshift(`<div class="ct"><span class="k">Контакт</span><span class="v">${esc(l.contact_name)}${l.decision_maker_role?' · '+esc(l.decision_maker_role):''}</span><span></span></div>`);
+  else if(l.decision_maker_role) rows.unshift(`<div class="ct"><span class="k">Кому</span><span class="v">${esc(l.decision_maker_role)}</span><span></span></div>`);
+  return rows.join('')||'<div class="txt">Контакту поки немає, див. примітку.</div>';
+}
+
+function card(l){
+  const s=SEG[l.seg]||{name:l.segment,v:'--accent'}; const st=l.status||'новий';
+  const dis=canWrite===false?'disabled':'';
+  const src=String(l.source_url||'').split(/[;\s]+/).filter(isUrl)[0];
+  return `<article class="card ${['відмова','пауза'].includes(st)?'done':''}" style="--segc:var(${s.v})" data-id="${esc(l.id)}">
+    <div class="c-top"><span class="pri ${esc(l.priority)}" title="Пріоритет ${esc(l.priority)}">${esc(l.priority)}</span><span class="seg">${esc(s.name)}</span>${l.local?'<span class="local">📍 зустріч</span>':''}</div>
+    <div><h3 class="c-name">${esc(l.company)}</h3><div class="c-city">${esc(l.city)}</div></div>
+    <div><div class="lbl">Чому вони</div><div class="txt">${esc(l.why_fit)}</div></div>
+    <div class="offer"><div class="lbl">Що пропонуємо</div><div class="txt">${esc(l.offer_angle)}</div></div>
+    <div><div class="lbl">Контакти</div><div class="contacts">${contactRows(l)}</div></div>
+    ${l.notes?`<div><div class="lbl">Примітка</div><div class="txt">${esc(l.notes)}</div></div>`:''}
+    ${src?`<div class="src">Джерело: <a href="${esc(src)}" target="_blank" rel="noopener">${esc(src.replace(/^https?:\/\/(www\.)?/,'').slice(0,60))}</a></div>`:''}
+    <button class="msg-btn" data-msg="${esc(l.id)}" aria-expanded="${openMsg.has(l.id)}"><span>Перше повідомлення</span><span>${openMsg.has(l.id)?'сховати':'показати'}</span></button>
+    ${openMsg.has(l.id)?`<div class="msg" id="msg-${esc(l.id)}">${esc(l.msg)}</div><button class="mini" data-copy-msg="${esc(l.id)}">Скопіювати текст</button>`:''}
+    <div class="work">
+      <select id="st-${esc(l.id)}" data-field="status" aria-label="Статус" ${dis}>${STATUSES.map(x=>`<option ${x.k===st?'selected':''}>${esc(x.k)}</option>`).join('')}</select>
+      <input id="dt-${esc(l.id)}" type="date" data-field="next_date" value="${esc(l.next_date||'')}" aria-label="Дата наступного кроку" ${dis}>
+      <input id="nx-${esc(l.id)}" class="next" type="text" data-field="next_step" value="${esc(l.next_step||'')}" placeholder="Наступний крок, напр. «follow-up з фото маскота»" aria-label="Наступний крок" ${dis}>
+    </div>
+  </article>`;
+}
+
+function filtered(){
+  const ord={A:0,B:1,C:2}; const sto=Object.fromEntries(STATUSES.map((s,i)=>[s.k,i]));
+  return leads.filter(l=>(!F.seg.size||F.seg.has(l.seg))&&(!F.pri.size||F.pri.has(l.priority))&&(!F.local||l.local)
+    &&(!F.status||(l.status||'новий')===F.status)
+    &&(!F.q||[l.company,l.city,l.why_fit,l.offer_angle,l.what_they_do,l.notes].join(' ').toLowerCase().includes(F.q)))
+   .sort((a,b)=>(['відмова','пауза'].includes(a.status)-['відмова','пауза'].includes(b.status))||(ord[a.priority]-ord[b.priority])||a.seg.localeCompare(b.seg)||a.id.localeCompare(b.id));
+}
+let pending=false;
+function renderGrid(){
+  const g=$('grid');
+  if(g.contains(document.activeElement)&&document.activeElement.matches('input,select')){pending=true;return}
+  pending=false;
+  if(!loaded){g.innerHTML='';return}
+  const list=filtered();
+  g.innerHTML=list.length?list.map(card).join(''):`<div class="empty">${leads.length?'Під ці фільтри нічого не знайшлося. Зніміть один із фільтрів.':'Лідів ще немає. Щойно Claude додасть перших, вони з’являться тут.'}</div>`;
+}
+$('grid').addEventListener('focusout',()=>setTimeout(()=>{if(pending)renderAll()},0));
+function renderAll(){renderFilters();renderPipe();renderGrid()}
+
+function copyText(text,btn){
+  const done=()=>{const o=btn.textContent;btn.textContent='скопійовано';setTimeout(()=>btn.textContent=o,1400)};
+  try{navigator.clipboard.writeText(text).then(done,()=>fallback())}catch(e){fallback()}
+  function fallback(){const t=document.createElement('textarea');t.value=text;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();
+    try{document.execCommand('copy');done()}catch(e){btn.textContent='виділіть текст вручну'}t.remove()}
+}
+$('grid').addEventListener('click',e=>{
+  const c=e.target.closest('[data-copy]'); if(c){copyText(c.dataset.copy,c);return}
+  const m=e.target.closest('[data-msg]'); if(m){const id=m.dataset.msg;openMsg.has(id)?openMsg.delete(id):openMsg.add(id);renderGrid();return}
+  const cm=e.target.closest('[data-copy-msg]'); if(cm){const l=leads.find(x=>x.id===cm.dataset.copyMsg); if(l) copyText(l.msg,cm);}
+});
+
+/* записи: по одному за раз на документ */
+const chains={};
+function save(id,patch){
+  if(!db) return;
+  const today=new Date().toISOString().slice(0,10);
+  chains[id]=(chains[id]||Promise.resolve()).then(()=>db.collection('leads').doc(id).update({...patch,touched:today}))
+   .catch(err=>{ if(err&&err.code==='invalid_argument'&&canWrite===null){canWrite=false;renderGrid();note('Тут можна лише переглядати: змінювати статуси може власник.',true)}
+     else note('Не вдалося зберегти зміну. Перевірте з’єднання і спробуйте ще раз.',true)});
+}
+$('grid').addEventListener('change',e=>{
+  const el=e.target.closest('[data-field]'); if(!el) return;
+  const id=el.closest('.card').dataset.id; const l=leads.find(x=>x.id===id); if(!l) return;
+  const f=el.dataset.field; const v=el.value;
+  if((l[f]||'')===v) return;
+  save(id,{[f]:v});
+});
+function note(t,err){const n=$('db-note');n.textContent=t;n.classList.toggle('err',!!err)}
+
+/* ---------- підключення до бази ---------- */
+renderAll();
+(async()=>{
+  const c=window.claude;
+  if(!c||!c.use){note('База лідів відкривається лише на claude.ai.',true);return}
+  db=await c.use('db');
+  if(!db){note('У цьому перегляді база лідів недоступна. Відкрийте сторінку на claude.ai, увійшовши в акаунт.',true);return}
+  try{const u=await c.use('user'); if(u&&u.can){const w=await u.can('data.write'); if(w===false) canWrite=false; else if(w===true) canWrite=true;}}catch(e){}
+  const timer=setTimeout(()=>{if(!loaded) note('Ліди поки не завантажились. Перевірте з’єднання, сторінка спробує ще раз сама.',true)},10000);
+  db.collection('leads').onSnapshot(snap=>{
+    leads=snap.docs.filter(d=>d.exists).map(d=>({id:d.id,...d.data()}));
+    if(!snap.metadata.fromCache){loaded=true;clearTimeout(timer);note(canWrite===false?'Режим перегляду: змінювати статуси може власник.':'Статуси й нотатки зберігаються автоматично.')}
+    else if(leads.length){loaded=true;note('Показую збережену копію, оновлюю…')}
+    renderAll();
+  },err=>{clearTimeout(timer);note('Не вдалося завантажити ліди. Оновіть сторінку пізніше.',true)});
+})();
+</script>
