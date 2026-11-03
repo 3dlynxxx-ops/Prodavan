@@ -80,7 +80,7 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
 .pri.C{border:1px dashed var(--muted);color:var(--muted)}
 .seg{font-size:12px;font-weight:600;color:var(--segc);border:1px solid var(--segc);border-radius:999px;padding:2px 9px}
 .local{font-size:12px;font-weight:600;background:var(--surface-2);border-radius:999px;padding:2px 9px;color:var(--ink-soft)}
-.c-name{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:.95;overflow-wrap:anywhere}
+.c-name{font-family:var(--f-display);font-weight:700;font-size:24px;line-height:.95;overflow-wrap:anywhere}
 .c-city{font-size:13px;color:var(--muted);margin-top:4px}
 .lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
 .txt{font-size:14px;color:var(--ink-soft);overflow-wrap:anywhere}
@@ -180,12 +180,28 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
 .combo{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:12px}
 .combo-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:8px;font-variant-numeric:tabular-nums}
 .combo-row:last-child{border-bottom:0;font-weight:700}
+/* ніші */
+.niches{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:10px}
+.nich{appearance:none;text-align:left;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--segc);border-radius:var(--r);padding:12px 14px;display:grid;gap:2px;color:var(--ink)}
+.nich.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.nich-name{font-family:var(--f-display);font-size:24px;font-weight:700;line-height:1;text-transform:uppercase}
+.nich-n{font-family:var(--f-display);font-size:40px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.nich-meta{font-size:12px;opacity:.8}
+.nich-hint{font-size:12px;opacity:.65}
+.row-lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.c-actions{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center}
+.c-actions select{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px;min-width:0;width:100%}
+.c-actions .msg-btn{padding:7px 10px;font-size:13px}
+.details{display:grid;gap:12px;border-top:1px dashed var(--line);padding-top:12px}
+.details .work{border-top:0;padding-top:0}
 @media (max-width:640px){
   .band .wrap{grid-template-columns:minmax(0,1fr)}
   .goal{max-width:none}
   .tab{font-size:20px;padding-inline:10px}
   .work{grid-template-columns:minmax(0,1fr)}
   .week{grid-template-columns:minmax(0,1fr)}
+  .c-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .c-actions select{grid-column:1/-1}
 }
 @media (prefers-reduced-motion:no-preference){.card{transition:opacity .2s}}
 </style>
@@ -216,16 +232,18 @@ main .wrap{padding-block:24px 64px;display:grid;gap:24px}
 <main>
   <!-- ЛІДИ -->
   <section class="wrap" id="view-leads" data-view-panel="leads">
+    <div class="niches" id="niches"></div>
     <div class="pipe" aria-label="Воронка за статусами">
       <div class="pipe-bar" id="pipe-bar"></div>
       <div class="pipe-legend" id="pipe-legend"></div>
     </div>
-    <div class="filters" id="filters"></div>
+    <div class="filters" id="types"></div>
     <div class="filters">
-      <input class="search" id="q" type="search" placeholder="Пошук: назва, місто, текст…" aria-label="Пошук по лідах">
+      <div class="filters" id="prio"></div>
       <select class="chip" id="f-status" aria-label="Фільтр за статусом"></select>
-      <span class="status-note" id="db-note">Завантажую ліди…</span>
+      <input class="search" id="q" type="search" placeholder="Пошук: назва, місто…" aria-label="Пошук по лідах">
     </div>
+    <span class="status-note" id="db-note">Завантажую ліди…</span>
     <div class="grid" id="grid"></div>
   </section>
 
@@ -422,50 +440,63 @@ $('segs').innerHTML=SEGMENTS.map(s=>`
 
 /* ---------- ліди ---------- */
 let leads=[]; let loaded=false; let canWrite=null; let db=null;
-const F={seg:new Set(),pri:new Set(),wave:new Set(),niche:new Set(),tier:new Set(),local:false,status:'',q:''};
-let NICHES=['IT','Бренди','Послуги','Захід','Купували мерч'];
-const waveOf=l=>String(l.wave||1);
-const WAVES={'1':'Хвиля 1','2':'Хвиля 2 · бізнес','3':'Хвиля 3 · книжки','4':'Хвиля 4 · настолки','5':'Хвиля 5 · оборонка'};
-const nichesOf=l=>String(l.niche||'').split(' + ').filter(Boolean);
+const F={niche:'all',type:new Set(),pri:new Set(),local:false,status:'',q:''};
+const NICHE_DEF=[
+  {k:'biz',name:'Бізнес-мерч',hint:'новорічні подарунки, брелоки, маскоти',v:'--s2',segs:['S2']},
+  {k:'books',name:'Книжки',hint:'закладки, «Постаті», букнуки',v:'--s1',segs:['S1','S6']},
+  {k:'games',name:'Настолки',hint:'мініатюри, органайзери, реквізит',v:'--s4',segs:['S4']},
+  {k:'defense',name:'Оборонка',hint:'кріплення, корпуси, прототипи',v:'--s5',segs:['S5']},
+  {k:'partners',name:'Партнери й нагороди',hint:'агенції, премії, виші',v:'--s3',segs:['S3','S8']}];
+const nicheOf=l=>(NICHE_DEF.find(n=>n.segs.includes(l.seg))||{k:'other'}).k;
+const TYPE_FIX={'магазин настілок':'магазин настолок','Хвиля 1':'Перший пошук'};
+function typesOf(l){
+  if(l.seg==='S3') return ['агенції'];
+  if(l.seg==='S8') return [/універс/i.test(l.company||'')?'університети':'премії й події'];
+  if(l.seg==='S6') return ['опт у роздріб'];
+  if(l.seg==='S2'&&!(l.wave>=2)) return ['перший пошук'];
+  return String(l.niche||'інше').split(' + ').filter(Boolean).map(t=>(TYPE_FIX[t]||t).toLowerCase());
+}
 const tiersOf=l=>Array.isArray(l.tiers)?l.tiers:[];
 const nameQ=l=>String(l.company||'').replace(/\s*\(.*?\)/g,'').split(/\s+[—–]\s+/)[0].trim();
 const cityQ=l=>String(l.city||'').split(/[;,(]/)[0].trim();
-const openMsg=new Set();
+const openMsg=new Set(), openDet=new Set();
+const inWork=l=>!['новий',...DONE].includes(l.status||'новий');
+const scope=()=>F.niche==='all'?leads:leads.filter(l=>nicheOf(l)===F.niche);
 
 function renderFilters(){
-  const cnt=(fn)=>leads.filter(fn).length;
-  NICHES=[...new Set(leads.flatMap(nichesOf))].sort((a,b)=>cnt(l=>nichesOf(l).includes(b))-cnt(l=>nichesOf(l).includes(a)));
-  let h='';
-  Object.entries(SEG).forEach(([k,s])=>{h+=`<button class="chip" data-f="seg" data-v="${k}" aria-pressed="${F.seg.has(k)}"><span class="dot" style="background:var(${s.v})"></span>${esc(s.name)} <span class="n">${cnt(l=>l.seg===k)}</span></button>`;});
-  h+='<span class="sep"></span>';
-  [...new Set(leads.map(waveOf))].sort().map(w=>[w,WAVES[w]||('Хвиля '+w)]).forEach(([w,t])=>{h+=`<button class="chip" data-f="wave" data-v="${w}" aria-pressed="${F.wave.has(w)}">${t} <span class="n">${cnt(l=>waveOf(l)===w)}</span></button>`;});
-  h+='<span class="sep"></span>';
-  NICHES.forEach(n=>{h+=`<button class="chip" data-f="niche" data-v="${esc(n)}" aria-pressed="${F.niche.has(n)}">${esc(n)} <span class="n">${cnt(l=>nichesOf(l).includes(n))}</span></button>`;});
-  h+='<span class="sep"></span>';
-  ['T2','T3','T1'].forEach(t=>{h+=`<button class="chip" data-f="tier" data-v="${t}" aria-pressed="${F.tier.has(t)}">${t.replace('T','Т')} <span class="n">${cnt(l=>tiersOf(l).includes(t))}</span></button>`;});
-  h+='<span class="sep"></span>';
-  ['A','B','C'].forEach(p=>{h+=`<button class="chip" data-f="pri" data-v="${p}" aria-pressed="${F.pri.has(p)}">Пріоритет ${p} <span class="n">${cnt(l=>l.priority===p)}</span></button>`;});
-  h+='<span class="sep"></span>';
-  h+=`<button class="chip" data-f="local" aria-pressed="${F.local}">📍 Закарпаття, можна зустрітись <span class="n">${cnt(l=>l.local)}</span></button>`;
-  $('filters').innerHTML=h;
+  const cnt=(arr,fn)=>arr.filter(fn).length;
+  let h=`<button class="nich ${F.niche==='all'?'on':''}" data-niche="all" style="--segc:var(--ink)"><span class="nich-name">Усі ніші</span><span class="nich-n">${leads.length}</span><span class="nich-meta">A: ${cnt(leads,l=>l.priority==='A')} · у роботі: ${cnt(leads,inWork)}</span></button>`;
+  NICHE_DEF.forEach(n=>{const a=leads.filter(l=>nicheOf(l)===n.k);
+    h+=`<button class="nich ${F.niche===n.k?'on':''}" data-niche="${n.k}" style="--segc:var(${n.v})"><span class="nich-name">${esc(n.name)}</span><span class="nich-n">${a.length}</span><span class="nich-meta">A: ${cnt(a,l=>l.priority==='A')} · у роботі: ${cnt(a,inWork)}</span><span class="nich-hint">${esc(n.hint)}</span></button>`;});
+  $('niches').innerHTML=h;
+  const sc=scope();
+  if(F.niche==='all'){$('types').innerHTML='';$('types').hidden=true;}
+  else{
+    const types=[...new Set(sc.flatMap(typesOf))].sort((a,b)=>cnt(sc,l=>typesOf(l).includes(b))-cnt(sc,l=>typesOf(l).includes(a)));
+    $('types').hidden=types.length<2;
+    $('types').innerHTML='<span class="row-lbl">Тип</span>'+types.map(t=>`<button class="chip" data-f="type" data-v="${esc(t)}" aria-pressed="${F.type.has(t)}">${esc(t)} <span class="n">${cnt(sc,l=>typesOf(l).includes(t))}</span></button>`).join('');
+  }
+  $('prio').innerHTML='<span class="row-lbl">Пріоритет</span>'+['A','B','C'].map(p=>`<button class="chip" data-f="pri" data-v="${p}" aria-pressed="${F.pri.has(p)}">${p} <span class="n">${cnt(sc,l=>l.priority===p)}</span></button>`).join('')
+    +`<button class="chip" data-f="local" aria-pressed="${F.local}">📍 Закарпаття <span class="n">${cnt(sc,l=>l.local)}</span></button>`;
   const sel=$('f-status'); const cur=F.status;
-  sel.innerHTML=`<option value="">Усі статуси</option>`+STATUSES.map(s=>`<option value="${esc(s.k)}">${esc(s.k)} · ${cnt(l=>(l.status||'новий')===s.k)}</option>`).join('');
+  sel.innerHTML=`<option value="">Усі статуси</option>`+STATUSES.map(s=>`<option value="${esc(s.k)}">${esc(s.k)} · ${cnt(sc,l=>(l.status||'новий')===s.k)}</option>`).join('');
   sel.value=cur;
 }
-$('filters').addEventListener('click',e=>{
+$('niches').addEventListener('click',e=>{const b=e.target.closest('[data-niche]'); if(!b) return; F.niche=b.dataset.niche; F.type.clear(); renderAll();});
+['types','prio'].forEach(id=>$(id).addEventListener('click',e=>{
   const b=e.target.closest('.chip'); if(!b) return;
   const f=b.dataset.f,v=b.dataset.v;
   if(f==='local') F.local=!F.local; else {F[f].has(v)?F[f].delete(v):F[f].add(v);}
   renderAll();
-});
+}));
 $('f-status').addEventListener('change',e=>{F.status=e.target.value;renderAll()});
 $('q').addEventListener('input',e=>{F.q=e.target.value.trim().toLowerCase();renderGrid()});
 
 function renderPipe(){
-  const total=leads.length||1;
-  $('pipe-bar').innerHTML=STATUSES.map(s=>{const n=leads.filter(l=>(l.status||'новий')===s.k).length;
+  const sc=scope();
+  $('pipe-bar').innerHTML=STATUSES.map(s=>{const n=sc.filter(l=>(l.status||'новий')===s.k).length;
     return n?`<span style="flex:${n};background:${s.c}" title="${esc(s.k)}: ${n}">${n}</span>`:''}).join('');
-  $('pipe-legend').innerHTML=STATUSES.map(s=>{const n=leads.filter(l=>(l.status||'новий')===s.k).length;
+  $('pipe-legend').innerHTML=STATUSES.map(s=>{const n=sc.filter(l=>(l.status||'новий')===s.k).length;
     return `<span><i style="background:${s.c}"></i>${esc(s.k)} · ${n}</span>`}).join('');
   $('tab-leads-n').textContent=leads.length?String(leads.length):'';
 }
@@ -498,37 +529,42 @@ function findLinks(l){
   return L.map(([t,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join('');
 }
 function card(l){
-  const s=SEG[l.seg]||{name:l.segment,v:'--accent'}; const st=l.status||'новий';
+  const nd=NICHE_DEF.find(n=>n.segs.includes(l.seg))||{v:'--accent'}; const st=l.status||'новий';
   const dis=canWrite===false?'disabled':'';
   const src=String(l.source_url||'').split(/[;\s]+/).filter(isUrl)[0];
-  return `<article class="card ${DONE.includes(st)?'done':''}" style="--segc:var(${s.v})" data-id="${esc(l.id)}">
-    <div class="c-top"><span class="pri ${esc(l.priority)}" title="Пріоритет ${esc(l.priority)}">${esc(l.priority)}</span><span class="seg">${esc(s.name)}</span>${tiersOf(l).map(t=>`<span class="tier ${esc(t)}">${esc(t.replace('T','Т'))}</span>`).join('')}${l.local?'<span class="local">📍 зустріч</span>':''}</div>
-    <div><h3 class="c-name">${esc(l.company)}</h3><div class="c-city">${esc(l.city)}${l.niche&&l.wave>=2?` · <span class="niche">${esc(l.niche)}</span>`:''}</div></div>
-    ${l.activity?`<div class="act"><b>Чи працює:</b> ${esc(l.activity)}</div>`:''}
-    <div><div class="lbl">Чому вони</div><div class="txt">${esc(l.why_fit)}</div></div>
+  const det=openDet.has(l.id), om=openMsg.has(l.id);
+  return `<article class="card ${DONE.includes(st)?'done':''}" style="--segc:var(${nd.v})" data-id="${esc(l.id)}">
+    <div class="c-top"><span class="pri ${esc(l.priority)}" title="Пріоритет ${esc(l.priority)}">${esc(l.priority)}</span><span class="seg">${esc(typesOf(l).join(' · '))}</span>${tiersOf(l).map(t=>`<span class="tier ${esc(t)}">${esc(t.replace('T','Т'))}</span>`).join('')}${l.local?'<span class="local">📍 зустріч</span>':''}</div>
+    <div><h3 class="c-name">${esc(l.company)}</h3><div class="c-city">${esc(l.city)}</div></div>
     <div class="offer"><div class="lbl">Що пропонуємо</div><div class="txt">${esc(l.offer_angle)}</div></div>
-    <div><div class="lbl">Контакти</div><div class="contacts">${contactRows(l)}</div></div>
-    <div><div class="lbl">Шукати контакти</div><div class="find">${findLinks(l)}</div></div>
-    ${l.notes?`<div><div class="lbl">Примітка</div><div class="txt">${esc(l.notes)}</div></div>`:''}
-    ${src?`<div class="src">Джерело: <a href="${esc(src)}" target="_blank" rel="noopener">${esc(src.replace(/^https?:\/\/(www\.)?/,'').slice(0,60))}</a></div>`:''}
-    <button class="msg-btn" data-msg="${esc(l.id)}" aria-expanded="${openMsg.has(l.id)}"><span>Перше повідомлення</span><span>${openMsg.has(l.id)?'сховати':'показати'}</span></button>
-    ${openMsg.has(l.id)?`<div class="msg" id="msg-${esc(l.id)}">${esc(l.msg)}</div><button class="mini" data-copy-msg="${esc(l.id)}">Скопіювати текст</button>`:''}
-    <div class="work">
+    <div class="c-actions">
       <select id="st-${esc(l.id)}" data-field="status" aria-label="Статус" ${dis}>${STATUSES.map(x=>`<option ${x.k===st?'selected':''}>${esc(x.k)}</option>`).join('')}</select>
-      <input id="dt-${esc(l.id)}" type="date" data-field="next_date" value="${esc(l.next_date||'')}" aria-label="Дата наступного кроку" ${dis}>
-      <input id="nx-${esc(l.id)}" class="next" type="text" data-field="next_step" value="${esc(l.next_step||'')}" placeholder="Наступний крок, напр. «follow-up з фото маскота»" aria-label="Наступний крок" ${dis}>
-      <textarea id="mc-${esc(l.id)}" data-field="my_contacts" placeholder="Мої контакти: ім'я, пошта, телефон, Instagram, які ви знайшли" aria-label="Мої знайдені контакти" ${dis}>${esc(l.my_contacts||'')}</textarea>
+      <button class="msg-btn" data-msg="${esc(l.id)}" aria-expanded="${om}">${om?'Сховати текст':'Перше повідомлення'}</button>
+      <button class="mini more" data-det="${esc(l.id)}" aria-expanded="${det}">${det?'Згорнути':'Детальніше'}</button>
     </div>
+    ${om?`<div class="msg" id="msg-${esc(l.id)}">${esc(l.msg)}</div><button class="mini" data-copy-msg="${esc(l.id)}">Скопіювати текст</button>`:''}
+    ${det?`<div class="details">
+      <div><div class="lbl">Чому вони</div><div class="txt">${esc(l.why_fit)}</div></div>
+      ${l.activity?`<div class="act"><b>Чи працює:</b> ${esc(l.activity)}</div>`:''}
+      <div><div class="lbl">Контакти</div><div class="contacts">${contactRows(l)}</div></div>
+      <div><div class="lbl">Шукати контакти</div><div class="find">${findLinks(l)}</div></div>
+      ${l.notes?`<div><div class="lbl">Примітка</div><div class="txt">${esc(l.notes)}</div></div>`:''}
+      ${src?`<div class="src">Джерело: <a href="${esc(src)}" target="_blank" rel="noopener">${esc(src.replace(/^https?:\/\/(www\.)?/,'').slice(0,60))}</a></div>`:''}
+      <div class="work">
+        <input id="nx-${esc(l.id)}" class="next" type="text" data-field="next_step" value="${esc(l.next_step||'')}" placeholder="Наступний крок" aria-label="Наступний крок" ${dis}>
+        <input id="dt-${esc(l.id)}" type="date" data-field="next_date" value="${esc(l.next_date||'')}" aria-label="Дата наступного кроку" ${dis}>
+        <textarea id="mc-${esc(l.id)}" data-field="my_contacts" placeholder="Мої контакти: ім'я, пошта, телефон, Instagram" aria-label="Мої знайдені контакти" ${dis}>${esc(l.my_contacts||'')}</textarea>
+      </div>
+    </div>`:''}
   </article>`;
 }
 
 function filtered(){
-  const ord={A:0,B:1,C:2}; const sto=Object.fromEntries(STATUSES.map((s,i)=>[s.k,i]));
-  return leads.filter(l=>(!F.seg.size||F.seg.has(l.seg))&&(!F.pri.size||F.pri.has(l.priority))&&(!F.local||l.local)
-    &&(!F.wave.size||F.wave.has(waveOf(l)))&&(!F.niche.size||nichesOf(l).some(n=>F.niche.has(n)))&&(!F.tier.size||tiersOf(l).some(t=>F.tier.has(t)))
+  const ord={A:0,B:1,C:2};
+  return scope().filter(l=>(!F.type.size||typesOf(l).some(t=>F.type.has(t)))&&(!F.pri.size||F.pri.has(l.priority))&&(!F.local||l.local)
     &&(!F.status||(l.status||'новий')===F.status)
     &&(!F.q||[l.company,l.city,l.why_fit,l.offer_angle,l.what_they_do,l.notes,l.niche,l.my_contacts].join(' ').toLowerCase().includes(F.q)))
-   .sort((a,b)=>(DONE.includes(a.status)-DONE.includes(b.status))||(ord[a.priority]-ord[b.priority])||a.seg.localeCompare(b.seg)||a.id.localeCompare(b.id));
+   .sort((a,b)=>(DONE.includes(a.status)-DONE.includes(b.status))||(ord[a.priority]-ord[b.priority])||String(a.seg).localeCompare(String(b.seg))||a.id.localeCompare(b.id));
 }
 let pending=false;
 function renderGrid(){
@@ -550,6 +586,7 @@ function copyText(text,btn){
 }
 $('grid').addEventListener('click',e=>{
   const c=e.target.closest('[data-copy]'); if(c){copyText(c.dataset.copy,c);return}
+  const d=e.target.closest('[data-det]'); if(d){const id=d.dataset.det;openDet.has(id)?openDet.delete(id):openDet.add(id);renderGrid();return}
   const m=e.target.closest('[data-msg]'); if(m){const id=m.dataset.msg;openMsg.has(id)?openMsg.delete(id):openMsg.add(id);renderGrid();return}
   const cm=e.target.closest('[data-copy-msg]'); if(cm){const l=leads.find(x=>x.id===cm.dataset.copyMsg); if(l) copyText(l.msg,cm);}
 });
