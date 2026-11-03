@@ -7,7 +7,7 @@
 :root{
   --bg:#f5f0e8; --surface:#fffdf8; --surface-2:#ebe9d2; --ink:#1b2d14; --ink-soft:#4b5a40; --muted:#7a8270;
   --accent:#3f6b2a; --accent-mid:#9bb47f; --line:#d8d6bf; --band:#1b2d14; --band-fg:#f1f1da; --band-soft:#9bb47f;
-  --s1:#8a3b5c; --s4:#b3471d; --s5:#4d5d3a; --s2:#2c6a86; --s3:#7a52a3; --s6:#9a6414; --s8:#3f6b2a;
+  --s1:#8a3b5c; --s4:#b3471d; --s5:#4d5d3a; --s7:#8a6d1f; --s2:#2c6a86; --s3:#7a52a3; --s6:#9a6414; --s8:#3f6b2a;
   --ok:#2f7d32; --warn:#a86b00; --bad:#a33a2a;
   --f-display:'Alumni Sans','Arial Narrow',sans-serif; --f-text:'Onest',system-ui,-apple-system,sans-serif;
   --r:10px;
@@ -15,11 +15,11 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#10180d; --surface:#172214; --surface-2:#1f2d1a; --ink:#ecebd6; --ink-soft:#c3c6ad; --muted:#8f977f;
   --accent:#a9c98a; --accent-mid:#6f8f55; --line:#2c3b25; --band:#0a1108; --band-fg:#f1f1da; --band-soft:#9bb47f;
-  --s1:#e08fb0; --s4:#f0956b; --s5:#b5c79a; --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}}
+  --s1:#e08fb0; --s4:#f0956b; --s5:#b5c79a; --s7:#e3c46a; --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#10180d; --surface:#172214; --surface-2:#1f2d1a; --ink:#ecebd6; --ink-soft:#c3c6ad; --muted:#8f977f;
   --accent:#a9c98a; --accent-mid:#6f8f55; --line:#2c3b25; --band:#0a1108; --band-fg:#f1f1da; --band-soft:#9bb47f;
-  --s1:#e08fb0; --s4:#f0956b; --s5:#b5c79a; --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}
+  --s1:#e08fb0; --s4:#f0956b; --s5:#b5c79a; --s7:#e3c46a; --s2:#6fb3d2; --s3:#b99ae0; --s6:#e0a85a; --s8:#a9c98a; --ok:#7cc77f; --warn:#e5b04a; --bad:#ec8a78; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:15px;line-height:1.5}
 a{color:var(--accent)}
@@ -446,6 +446,7 @@ const NICHE_DEF=[
   {k:'books',name:'Книжки',hint:'закладки, «Постаті», букнуки',v:'--s1',segs:['S1','S6']},
   {k:'games',name:'Настолки',hint:'мініатюри, органайзери, реквізит',v:'--s4',segs:['S4']},
   {k:'defense',name:'Оборонка',hint:'кріплення, корпуси, прототипи',v:'--s5',segs:['S5']},
+  {k:'museums',name:'Музеї й туризм',hint:'«Постаті», сувеніри, тактильні моделі',v:'--s7',segs:['S7']},
   {k:'partners',name:'Партнери й нагороди',hint:'агенції, премії, виші',v:'--s3',segs:['S3','S8']}];
 const nicheOf=l=>(NICHE_DEF.find(n=>n.segs.includes(l.seg))||{k:'other'}).k;
 const TYPE_FIX={'магазин настілок':'магазин настолок','Хвиля 1':'Перший пошук'};
