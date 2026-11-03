@@ -336,3 +336,100 @@ IQuest — розважальний центр | Харків (вул. Гром�
 ІгроДвіж — клуб настільних ігор | Вінниця
 Happiness — сімейний клуб-кафе | Тернопіль (за list.in.ua; уточнити)
 Молодіжний хаб FREETIME (Запорізька політехніка) | Запоріжжя
+Irpin Drones | Ірпінь (Київщина)
+Vataga Drone | Київ
+Авіапартизани | Львів
+Дикі Шершні (Wild Hornets) | Україна
+Влучник (ТОВ «Влучник») | Україна
+F-Drones | Україна
+WIY Drones | Україна
+Vyriy (Vyriy Drone) | Україна
+Brave1 (кластер оборонних технологій) | Київ
+IRON Lviv Tech Cluster (кластер оборонних технологій IRON) | Львів
+Odd Systems | Київ
+NORDA Dynamics | Львів
+Motor-G | Україна
+AeroMotors | Україна
+Wild Hornets (БФ «Дикі Шершні») | Україна
+BlueBird Tech | Україна
+The Fourth Law (TFL) | Україна
+КОРТ (KORT) | Україна
+Промавтоматика (Promavtomatika) | Україна
+Ratel Robotics | Київ
+Kara Dag Technologies | Київ
+Contra Drone | Київ (за вакансіями)
+DevDroid | Київ (офіси також Харків, Львів)
+Roboneers | Львів (HQ за Dealroom)
+NUMO Robotics (раніше «Танкове бюро») | Львів (за вакансіями DOU)
+Бабай (Babai, РЕБ) | Україна
+HIMERA | Україна
+M-Tac | Київ
+ATA-GEAR | Київ
+UKRTAC | Київ
+СІЧ-Україна (SICH) | Україна
+Rarog Tactical Gear | Харків
+DeViRo | Дніпро
+Miltechlab (MilTech Lab) | Київ
+Skyeton | Київ
+Ukrspecsystems | Київ
+Athlon Avia | Київ
+Quantum Defense Tech | Київ
+Vyriy (Вирій) | Київ
+Hentai FPV | Львів
+SkyAtom | Україна
+Skyfall (Vampire, Shrike, P1-SUN) | Україна
+Frontline (Frontline Robotics) | Україна
+Odd Systems | Україна
+Amazing Drones | Україна
+STRIX (Strix Air) | Україна
+Повернись живим (Come Back Alive) | Київ
+Фонд Сергія Притули | Київ
+Технологічні Сили України (Tech Force in UA) | Київ
+КАІ — AVIA Lab (з виробником «Атлон Авіа») | Київ
+Національний університет «Львівська політехніка» (програма БпЛА, кластер Brave1) | Львів
+ДрукАрмія (DrukArmy) | Україна
+Defence Builder Accelerator | Україна
+Харківський авіаційний інститут (ХАІ) — кластер Brave1 | Харків
+3D Tech SLS | Львів
+December1 (D1) | Україна
+603700 | Україна
+Skyassist | Україна
+Seek UAV | Україна
+Pawell Battery | Україна
+Temerland | Київ (за robotics.press; уточнити)
+Spextr | Львів
+«Роботизовані Комплекси» | Україна
+UGV Robotics (бойовий модуль «Хижак») | Україна
+UGV Laboratory («Сімба», «Гієна») | Україна
+Piranha Tech | Україна
+UNWAVE | Україна
+TEMP-3000 (НВП «Темп-3000») | Ворзель (Київська обл.)
+Kiborg | Вінниця
+TQ Dnipro | Дніпро
+КРУК / KPYK (CROOK) | Одеса
+TENAX SHIELD | Україна
+Ukrainian Armor | Україна
+Ukrarmor | Україна
+VELMET | Україна
+Strix Air | Україна
+Bravery Invest (Ukropter) | Київ
+Vataga Drone | Україна
+UA Dynamics | Україна
+Skybat | Україна
+ADS Avia Tech | Україна
+Український фонд стартапів (УФС) — програми з Brave1 | Київ
+Центр Гончаренка | Київ
+Український католицький університет (кластер Brave1) | Львів
+Brave Inventors | Україна
+Stellar Jet | Україна
+Frontline Robotics (модуль «Буря») | Україна
+Abris Design Group | Україна
+Falcons | Україна
+УКУ — студентський проєкт 3D-друкованих турнікетів | Львів
+Archer (Archer-LPP) | Україна
+КРОН (бренд кронштейнів Picatinny) | Україна
+Gun Power Nation | Україна
+STEAM-майстерня з виготовлення дронів (Івано-Франківська міська рада) | Івано-Франківськ
+Студентські FPV-змагання в Ужгороді (на дронах SkyFall; організатор уточнити) | Ужгород
+AirUnit | Україна
+Goncharenko Centre — мережа майстерень 3D-друку | Україна
