@@ -447,7 +447,8 @@ const NICHE_DEF=[
   {k:'games',name:'Настолки',hint:'мініатюри, органайзери, реквізит',v:'--s4',segs:['S4']},
   {k:'defense',name:'Оборонка',hint:'кріплення, корпуси, прототипи',v:'--s5',segs:['S5']},
   {k:'museums',name:'Музеї й туризм',hint:'«Постаті», сувеніри, тактильні моделі',v:'--s7',segs:['S7']},
-  {k:'partners',name:'Партнери й нагороди',hint:'агенції, премії, виші',v:'--s3',segs:['S3','S8']}];
+  {k:'awards',name:'Нагороди й події',hint:'статуетки, медалі, мерч подій',v:'--s8',segs:['S8','S9']},
+  {k:'partners',name:'Агенції-партнери',hint:'виробник під їхнім брендом',v:'--s3',segs:['S3']}];
 const nicheOf=l=>(NICHE_DEF.find(n=>n.segs.includes(l.seg))||{k:'other'}).k;
 const TYPE_FIX={'магазин настілок':'магазин настолок','Хвиля 1':'Перший пошук'};
 function typesOf(l){
