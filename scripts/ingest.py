@@ -2,7 +2,7 @@
 """Збирає сирі CSV агентів однієї ніші в одну таблицю й готує документи для дошки.
 
 Використання:
-  python3 scripts/ingest.py <prefix> <seg> <id_letter> <out_csv> <seed_dir> [wave]
+  python3 scripts/ingest.py <prefix> <seg> <id_letter> <out_csv> <seed_dir|leads/data/NAME.json> [wave]
   напр.: python3 scripts/ingest.py games S4 G leads/games-leads.csv /tmp/seed4 4
 
 - читає leads/raw/<prefix>-*.csv (формат брифу агентів: segment,priority,company,city,type,...)
@@ -94,7 +94,9 @@ def main(prefix, seg, letter, out_csv, seed_dir, wave='4'):
                     m[f] = r.get(f, '')
         rows.append(m)
     rows.sort(key=lambda r: (ORD.get(r.get('priority'), 9), r.get('type', ''), r.get('city', '')))
-    os.makedirs(seed_dir, exist_ok=True)
+    as_json = seed_dir.endswith('.json')
+    if not as_json:
+        os.makedirs(seed_dir, exist_ok=True)
     out = []
     for i, m in enumerate(rows, 1):
         d = {f: (m.get(f) or '') for f in F}
@@ -102,8 +104,19 @@ def main(prefix, seg, letter, out_csv, seed_dir, wave='4'):
         d.update(seg=seg, segment=m.get('segment') or seg, niche=d['type'] or 'інше', wave=int(wave), tiers=[],
                  local=local, msg=message(seg, d['type'], local), status='новий', next_step='', next_date='', touched='')
         doc_id = f'{letter}{i:03d}'
-        json.dump(d, open(os.path.join(seed_dir, doc_id + '.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+        if not as_json:
+            json.dump(d, open(os.path.join(seed_dir, doc_id + '.json'), 'w', encoding='utf-8'), ensure_ascii=False)
         out.append({'id': doc_id, **d})
+    if as_json:
+        # статичний файл для дошки: leads/data/<name>.json + запис у manifest.json
+        path = os.path.join(root, seed_dir)
+        json.dump(out, open(path, 'w', encoding='utf-8'), ensure_ascii=False)
+        man_path = os.path.join(os.path.dirname(path), 'manifest.json')
+        man = json.load(open(man_path, encoding='utf-8')) if os.path.exists(man_path) else {'files': []}
+        name = os.path.basename(path)
+        if name not in man['files']:
+            man['files'].append(name)
+        json.dump(man, open(man_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     with open(os.path.join(root, out_csv), 'w', encoding='utf-8', newline='') as fh:
         w = csv.DictWriter(fh, fieldnames=['id', 'niche'] + F + ['status'], quoting=csv.QUOTE_ALL, extrasaction='ignore')
         w.writeheader()

@@ -598,7 +598,9 @@ const chains={};
 function save(id,patch){
   if(!db) return;
   const today=new Date().toISOString().slice(0,10);
-  chains[id]=(chains[id]||Promise.resolve()).then(()=>db.collection('leads').doc(id).update({...patch,touched:today}))
+  chains[id]=(chains[id]||Promise.resolve()).then(()=>{const ref=db.collection('leads').doc(id);
+    if(dbIds.has(id)) return ref.update({...patch,touched:today});
+    dbIds.add(id); return ref.set({...patch,touched:today});})
    .catch(err=>{ if(err&&err.code==='invalid_argument'&&canWrite===null){canWrite=false;renderGrid();note('Тут можна лише переглядати: змінювати статуси може власник.',true)}
      else note('Не вдалося зберегти зміну. Перевірте з’єднання і спробуйте ще раз.',true)});
 }
@@ -611,20 +613,37 @@ $('grid').addEventListener('change',e=>{
 });
 function note(t,err){const n=$('db-note');n.textContent=t;n.classList.toggle('err',!!err)}
 
-/* ---------- підключення до бази ---------- */
+/* ---------- дані: статичні файли лідів + база (статуси, нотатки, старі ліди) ---------- */
+let staticLeads=[], dbDocs=[], dbIds=new Set(), gotStatic=false, gotDb=false;
+function merge(){
+  const byId=new Map(); staticLeads.forEach(l=>byId.set(l.id,l));
+  dbDocs.forEach(d=>byId.set(d.id,{...(byId.get(d.id)||{}),...d}));
+  leads=[...byId.values()].filter(l=>l.company);
+  loaded=gotStatic&&(gotDb||!db);
+  renderAll();
+}
 renderAll();
 (async()=>{
+  try{
+    const m=await (await fetch('data/manifest.json',{cache:'no-store'})).json();
+    const parts=await Promise.all((m.files||[]).map(f=>fetch('data/'+f).then(r=>r.json()).catch(()=>[])));
+    staticLeads=parts.flat();
+  }catch(e){staticLeads=[];}
+  gotStatic=true; merge();
+})();
+(async()=>{
   const c=window.claude;
-  if(!c||!c.use){note('База лідів відкривається лише на claude.ai.',true);return}
+  if(!c||!c.use){note('Статуси зберігаються лише на claude.ai.',true);gotDb=true;merge();return}
   db=await c.use('db');
-  if(!db){note('У цьому перегляді база лідів недоступна. Відкрийте сторінку на claude.ai, увійшовши в акаунт.',true);return}
+  if(!db){note('У цьому перегляді статуси не зберігаються. Відкрийте сторінку на claude.ai, увійшовши в акаунт.',true);gotDb=true;merge();return}
   try{const u=await c.use('user'); if(u&&u.can){const w=await u.can('data.write'); if(w===false) canWrite=false; else if(w===true) canWrite=true;}}catch(e){}
-  const timer=setTimeout(()=>{if(!loaded) note('Ліди поки не завантажились. Перевірте з’єднання, сторінка спробує ще раз сама.',true)},10000);
+  const timer=setTimeout(()=>{if(!gotDb) note('Статуси поки не завантажились. Перевірте з’єднання, сторінка спробує ще раз сама.',true)},10000);
   db.collection('leads').onSnapshot(snap=>{
-    leads=snap.docs.filter(d=>d.exists).map(d=>({id:d.id,...d.data()}));
-    if(!snap.metadata.fromCache){loaded=true;clearTimeout(timer);note(canWrite===false?'Режим перегляду: змінювати статуси може власник.':'Статуси й нотатки зберігаються автоматично.')}
-    else if(leads.length){loaded=true;note('Показую збережену копію, оновлюю…')}
-    renderAll();
-  },err=>{clearTimeout(timer);note('Не вдалося завантажити ліди. Оновіть сторінку пізніше.',true)});
+    dbDocs=snap.docs.filter(d=>d.exists).map(d=>({id:d.id,...d.data()}));
+    dbIds=new Set(dbDocs.map(d=>d.id));
+    if(!snap.metadata.fromCache){gotDb=true;clearTimeout(timer);note(canWrite===false?'Режим перегляду: змінювати статуси може власник.':'Статуси й нотатки зберігаються автоматично.')}
+    else if(dbDocs.length){gotDb=true;note('Показую збережену копію, оновлюю…')}
+    merge();
+  },err=>{clearTimeout(timer);gotDb=true;merge();note('Не вдалося завантажити статуси. Оновіть сторінку пізніше.',true)});
 })();
 </script>
